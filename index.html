@@ -5,24 +5,180 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LaundryHub - Lavandería Under Demand</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { font-family: 'Inter', sans-serif; }
-        body { @apply bg-gray-50; }
-        .mobile-frame { @apply h-screen w-full max-w-md mx-auto bg-white relative; }
-        .btn-primary { @apply w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-2xl transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg; }
-        .btn-secondary { @apply w-full bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold py-3 px-4 rounded-2xl transition-all duration-200; }
-        .btn-ghost { @apply text-purple-600 font-semibold py-2 px-4 rounded-lg hover:bg-purple-50 transition-colors; }
-        .input-field { @apply w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition-all; }
-        .card { @apply bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-lg transition-all p-4; }
-        .screen { display: none; }
-        .screen.active { display: flex; }
-        .fade-in { animation: fadeIn 0.3s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        * {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #eef2f8 100%);
+            overflow: hidden;
+        }
+
+        .mobile-container {
+            height: 100vh;
+            width: 100%;
+            max-width: 390px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border-radius: 40px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            padding-bottom: 80px;
+        }
+
+        .screen-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .screen-wrapper::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .screen-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(124, 58, 237, 0.3);
+            border-radius: 3px;
+        }
+
+        .btn-primary {
+            @apply w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold py-3.5 px-6 rounded-2xl transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl;
+        }
+
+        .btn-secondary {
+            @apply w-full bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold py-3 px-4 rounded-2xl transition-all duration-200;
+        }
+
+        .btn-ghost {
+            @apply text-purple-600 font-semibold py-2 px-4 rounded-lg hover:bg-purple-50 transition-colors;
+        }
+
+        .input-field {
+            @apply w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition-all bg-white;
+        }
+
+        .card {
+            @apply bg-white border-2 border-gray-100 rounded-2xl shadow-sm hover:shadow-lg transition-all p-5 backdrop-blur-sm;
+        }
+
+        .card-gradient {
+            @apply bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-100 rounded-2xl p-6 shadow-sm;
+        }
+
+        .section-divider {
+            @apply w-full h-0.5 bg-gradient-to-r from-transparent via-gray-200 to-transparent my-8;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .badge {
+            @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-bold;
+        }
+
+        .badge-success {
+            @apply bg-green-100 text-green-700;
+        }
+
+        .badge-processing {
+            @apply bg-blue-100 text-blue-700;
+        }
+
+        .tab-nav {
+            @apply fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-96 bg-white border-t-2 border-gray-100 px-4 py-3 flex justify-around items-center rounded-t-3xl shadow-2xl;
+        }
+
+        .tab-item {
+            @apply flex flex-col items-center justify-center py-2 px-5 rounded-xl transition-all duration-200;
+        }
+
+        .tab-item.active {
+            @apply bg-purple-100 text-purple-600;
+        }
+
+        .tab-item:not(.active) {
+            @apply text-gray-500 hover:text-gray-700;
+        }
+
+        .progress-line {
+            @apply absolute left-0 top-0 h-1 bg-gradient-to-r from-purple-600 to-blue-600 transition-all duration-500;
+        }
+
+        .header-sticky {
+            @apply sticky top-0 bg-white/95 backdrop-blur-md border-b-2 border-gray-100 px-6 py-4 z-40;
+        }
+
+        .service-card {
+            @apply card cursor-pointer group transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:border-purple-300;
+        }
+
+        .status-progress {
+            @apply flex items-center justify-between relative;
+        }
+
+        .status-dot {
+            @apply w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg relative z-10 transition-all duration-300;
+        }
+
+        .status-line {
+            @apply absolute top-6 left-0 right-0 h-1 -z-10;
+        }
+
+        .loader {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .shimmer {
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-    <div id="app" class="mobile-frame"></div>
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="mobile-container">
+            <div class="screen-wrapper" id="screenWrapper"></div>
+            <nav class="tab-nav" id="tabNav"></nav>
+        </div>
+    </div>
 
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -31,115 +187,176 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // PANTALLA: Onboarding
+        // ICONOGRAFÍA
+        const Icons = {
+            sparkles: "✨",
+            arrow: "→",
+            back: "←",
+            phone: "📱",
+            email: "✉️",
+            home: "🏠",
+            clock: "⏱️",
+            location: "📍",
+            calendar: "📅",
+            check: "✓",
+            checkmark: "✓",
+            truck: "🚚",
+            history: "📋",
+            settings: "⚙️",
+            user: "👤",
+            logout: "🚪",
+            phone_call: "📞",
+            chat: "💬",
+            package: "📦",
+            process: "🌀",
+            fire: "🔥",
+            crown: "👑",
+            lightning: "⚡",
+            heart: "❤️",
+            shield: "🛡️",
+            check_circle: "✓",
+            gift: "🎁",
+            help: "❓",
+            pay: "💳",
+            lock: "🔒",
+            success: "🎉",
+            cycle: "🔄",
+            download: "📥",
+            happy: "😊",
+        };
+
+        // PANTALLA: Onboarding Premium
         function Onboarding({ onNext }) {
             return (
-                <div className="h-screen w-full bg-gradient-to-b from-white to-gray-50 flex flex-col items-center justify-center px-6 pb-20 fade-in">
-                    <div className="text-center space-y-8">
-                        <div className="flex justify-center">
-                            <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl text-4xl">
-                                ✨
+                <div className="screen active flex flex-col h-full justify-between p-8">
+                    <div className="flex-1 flex flex-col items-center justify-center space-y-10">
+                        <div className="relative w-32 h-32">
+                            <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-purple-600 to-blue-600 rounded-3xl shadow-2xl flex items-center justify-center">
+                                <span className="text-6xl">🧺</span>
+                            </div>
+                            <div className="absolute -inset-2 bg-gradient-to-br from-purple-400 to-blue-400 rounded-3xl opacity-20 blur-xl"></div>
+                        </div>
+
+                        <div className="text-center space-y-6">
+                            <div className="space-y-3">
+                                <h1 className="text-5xl font-bold text-gray-900 leading-tight">
+                                    Ropa Limpia
+                                </h1>
+                                <p className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                                    en 3 horas
+                                </p>
+                            </div>
+
+                            <p className="text-lg text-gray-600 leading-relaxed max-w-xs font-medium">
+                                Recogemos, lavamos y entregamos en tu puerta. Cero esfuerzo, máxima calidad.
+                            </p>
+
+                            <div className="flex justify-center gap-2 pt-2">
+                                <div className="w-2.5 h-2.5 rounded-full bg-purple-600"></div>
+                                <div className="w-2.5 h-2.5 rounded-full bg-purple-400"></div>
+                                <div className="w-2.5 h-2.5 rounded-full bg-purple-200"></div>
                             </div>
                         </div>
-                        <div className="space-y-3">
-                            <h1 className="text-4xl font-bold text-gray-900 leading-tight">Lavamos tu ropa</h1>
-                            <p className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">en 3 horas</p>
-                        </div>
-                        <p className="text-lg text-gray-600 leading-relaxed max-w-sm">Sin que te muevas de tu casa. Recogemos, lavamos y entregamos con la máxima calidad.</p>
-                        <div className="space-y-4 pt-12">
-                            <button onClick={() => onNext('login')} className="btn-primary">Empezar ahora</button>
-                            <button onClick={() => onNext('login')} className="btn-secondary">Ver más</button>
-                        </div>
-                        <p className="text-xs text-gray-500 pt-8">Disponible en tu zona • Sin compromiso</p>
+                    </div>
+
+                    <div className="space-y-3 pb-4">
+                        <button onClick={() => onNext('login')} className="btn-primary">
+                            Comenzar ahora
+                        </button>
+                        <button onClick={() => onNext('login')} className="btn-secondary">
+                            Más información
+                        </button>
                     </div>
                 </div>
             );
         }
 
-        // PANTALLA: Login
+        // PANTALLA: Login Premium
         function Login({ onNext }) {
             const [step, setStep] = useState('choose');
             const [loginType, setLoginType] = useState(null);
-            const [phone, setPhone] = useState('');
+            const [phone, setPhone] = useState('+34 ');
             const [email, setEmail] = useState('');
             const [code, setCode] = useState('');
 
-            const handlePhoneSubmit = (e) => {
-                e.preventDefault();
-                setStep('verify');
-            };
-
-            const handleEmailSubmit = (e) => {
-                e.preventDefault();
-                setStep('verify');
-            };
-
-            const handleVerify = (e) => {
-                e.preventDefault();
-                onNext('home');
-            };
-
             return (
-                <div className="h-screen w-full bg-white flex flex-col pb-20 fade-in overflow-y-auto">
+                <div className="screen active flex flex-col h-full">
                     {step !== 'choose' && (
-                        <button onClick={() => setStep('choose')} className="p-4 hover:bg-gray-50 transition-colors">
-                            <span className="text-2xl">←</span>
-                        </button>
+                        <div className="header-sticky flex items-center gap-4">
+                            <button onClick={() => setStep('choose')} className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors">
+                                <span className="text-2xl">{Icons.back}</span>
+                            </button>
+                            <h2 className="text-xl font-bold text-gray-900">Acceso a tu cuenta</h2>
+                        </div>
                     )}
 
-                    <div className="flex-1 flex flex-col items-center justify-center px-6 space-y-8">
+                    <div className="flex-1 flex flex-col items-center justify-center px-6 space-y-6">
                         {step === 'choose' && (
                             <>
-                                <h1 className="text-3xl font-bold text-gray-900">Bienvenido</h1>
-                                <div className="w-full space-y-3 pt-4">
-                                    <button onClick={() => { setLoginType('phone'); setStep('enter'); }} className="card cursor-pointer w-full flex items-center space-x-4 py-4 px-5">
-                                        <span className="text-2xl">📱</span>
-                                        <div className="text-left">
-                                            <p className="font-semibold text-gray-900">Teléfono</p>
-                                            <p className="text-sm text-gray-500">Código de 4 dígitos</p>
+                                <div className="text-center mb-4">
+                                    <h1 className="text-3xl font-bold text-gray-900">¡Bienvenido!</h1>
+                                    <p className="text-gray-600 mt-2">Elige cómo acceder</p>
+                                </div>
+
+                                <div className="w-full space-y-3">
+                                    <button onClick={() => { setLoginType('phone'); setStep('enter'); }} className="service-card flex items-center space-x-5 py-5 px-6">
+                                        <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-2xl flex items-center justify-center text-2xl">
+                                            {Icons.phone}
                                         </div>
+                                        <div className="text-left flex-1">
+                                            <p className="font-bold text-gray-900 text-lg">Teléfono</p>
+                                            <p className="text-sm text-gray-600">Código de 4 dígitos</p>
+                                        </div>
+                                        <span className="text-2xl text-gray-400">{Icons.arrow}</span>
                                     </button>
-                                    <button onClick={() => { setLoginType('email'); setStep('enter'); }} className="card cursor-pointer w-full flex items-center space-x-4 py-4 px-5">
-                                        <span className="text-2xl">✉️</span>
-                                        <div className="text-left">
-                                            <p className="font-semibold text-gray-900">Correo</p>
-                                            <p className="text-sm text-gray-500">Acceso rápido</p>
+
+                                    <button onClick={() => { setLoginType('email'); setStep('enter'); }} className="service-card flex items-center space-x-5 py-5 px-6">
+                                        <div className="w-14 h-14 bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl flex items-center justify-center text-2xl">
+                                            {Icons.email}
                                         </div>
+                                        <div className="text-left flex-1">
+                                            <p className="font-bold text-gray-900 text-lg">Correo</p>
+                                            <p className="text-sm text-gray-600">Acceso rápido</p>
+                                        </div>
+                                        <span className="text-2xl text-gray-400">{Icons.arrow}</span>
                                     </button>
                                 </div>
                             </>
                         )}
 
                         {step === 'enter' && loginType === 'phone' && (
-                            <form onSubmit={handlePhoneSubmit} className="w-full space-y-6">
+                            <form onSubmit={(e) => { e.preventDefault(); setStep('verify'); }} className="w-full space-y-6">
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-900 mb-2">Número de teléfono</label>
-                                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+34 600 000 000" className="input-field" />
+                                    <label className="block text-sm font-bold text-gray-900 mb-3">Número de teléfono</label>
+                                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+34 600 000 000" className="input-field text-lg" />
                                 </div>
                                 <button type="submit" className="btn-primary">Continuar</button>
                             </form>
                         )}
 
                         {step === 'enter' && loginType === 'email' && (
-                            <form onSubmit={handleEmailSubmit} className="w-full space-y-6">
+                            <form onSubmit={(e) => { e.preventDefault(); setStep('verify'); }} className="w-full space-y-6">
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-900 mb-2">Correo electrónico</label>
-                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com" className="input-field" />
+                                    <label className="block text-sm font-bold text-gray-900 mb-3">Correo electrónico</label>
+                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com" className="input-field text-lg" />
                                 </div>
                                 <button type="submit" className="btn-primary">Continuar</button>
                             </form>
                         )}
 
                         {step === 'verify' && (
-                            <form onSubmit={handleVerify} className="w-full space-y-6">
-                                <div className="text-center space-y-2">
-                                    <p className="text-gray-600">Hemos enviado un código a <span className="font-semibold text-gray-900">{loginType === 'phone' ? phone : email}</span></p>
+                            <form onSubmit={(e) => { e.preventDefault(); onNext('home'); }} className="w-full space-y-6">
+                                <div className="text-center space-y-3">
+                                    <p className="text-gray-900 font-semibold">Código de verificación</p>
+                                    <p className="text-sm text-gray-600">Hemos enviado un código a:</p>
+                                    <p className="font-bold text-purple-600 break-all">{loginType === 'phone' ? phone : email}</p>
                                 </div>
+
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-900 mb-2">Código de verificación</label>
-                                    <input type="text" maxLength="4" value={code} onChange={(e) => setCode(e.target.value)} placeholder="0000" className="input-field text-center text-2xl tracking-widest font-bold" />
+                                    <input type="text" maxLength="4" value={code} onChange={(e) => setCode(e.target.value)} placeholder="0000" className="input-field text-center text-4xl tracking-widest font-bold letter-spacing-lg" />
                                 </div>
-                                <button type="submit" className="btn-primary">Verificar</button>
+
+                                <button type="submit" className="btn-primary">Verificar y acceder</button>
                                 <button type="button" onClick={() => setStep('enter')} className="btn-ghost w-full">Cambiar contacto</button>
                             </form>
                         )}
@@ -148,174 +365,255 @@
             );
         }
 
-        // PANTALLA: Home
+        // PANTALLA: Home Mejorada
         function Home({ onNext }) {
             return (
-                <div className="h-screen w-full bg-gradient-to-b from-white to-gray-50 overflow-y-auto pb-24 fade-in">
-                    <div className="px-6 pt-8">
-                        <div className="mb-8">
-                            <p className="text-gray-600">Hola,</p>
-                            <h1 className="text-3xl font-bold text-gray-900">Carolina</h1>
+                <div className="screen active flex flex-col h-full">
+                    <div className="header-sticky">
+                        <div className="space-y-1">
+                            <p className="text-xs font-bold text-purple-600 uppercase tracking-wider">Bienvenido de vuelta</p>
+                            <h1 className="text-2xl font-bold text-gray-900">Carolina García</h1>
                         </div>
+                    </div>
 
-                        <button onClick={() => onNext('service')} className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold py-6 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 flex items-center justify-between group">
-                            <div className="text-left">
-                                <p className="text-sm opacity-90">Solicitar</p>
-                                <p className="text-2xl">Servicio</p>
+                    <div className="flex-1 flex flex-col px-6 py-8 space-y-8">
+                        {/* CTA Principal */}
+                        <button onClick={() => onNext('service')} className="relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-purple-700 to-blue-600 rounded-3xl shadow-xl group-hover:shadow-2xl transition-all duration-300 group-hover:scale-105"></div>
+                            <div className="relative px-6 py-8 flex items-center justify-between text-white">
+                                <div className="text-left">
+                                    <p className="text-sm font-semibold opacity-90 uppercase tracking-wider">Solicita ahora</p>
+                                    <p className="text-3xl font-bold mt-1">Tu lavandería</p>
+                                </div>
+                                <span className="text-5xl group-hover:scale-125 transition-transform">{Icons.sparkles}</span>
                             </div>
-                            <span className="text-3xl">✨</span>
                         </button>
-                    </div>
 
-                    <div className="px-6 mt-12">
-                        <h2 className="text-lg font-bold text-gray-900 mb-4">Último pedido</h2>
-                        <div className="card cursor-pointer hover:shadow-lg transition-all" onClick={() => onNext('tracking')}>
-                            <div className="flex items-start justify-between mb-4">
-                                <div>
-                                    <p className="text-sm text-gray-600">Pedido #12345</p>
-                                    <p className="text-gray-900 font-semibold mt-1">Entregado</p>
-                                </div>
-                                <span className="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Entregado</span>
+                        <div className="section-divider"></div>
+
+                        {/* Último Pedido */}
+                        <div>
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-lg font-bold text-gray-900">Último pedido</h2>
+                                <span className="text-xs font-bold text-purple-600 uppercase">Entregado</span>
                             </div>
-                            <div className="space-y-2 pt-4 border-t border-gray-100">
-                                <div className="flex items-center text-gray-600 text-sm">
-                                    ⏱️ 5 de Mayo • 5 prendas
+
+                            <div className="card group cursor-pointer">
+                                <div className="flex items-start justify-between mb-4">
+                                    <div>
+                                        <p className="text-sm text-gray-600 font-semibold">#12345</p>
+                                        <p className="text-gray-900 font-bold text-lg mt-1">Lavado Completo</p>
+                                    </div>
+                                    <span className="badge badge-success">{Icons.checkmark} Entregado</span>
                                 </div>
+
+                                <div className="space-y-3 pt-4 border-t-2 border-gray-100">
+                                    <div className="flex items-center justify-between text-sm">
+                                        <span className="text-gray-600">5 de Mayo • 5 prendas</span>
+                                        <span className="text-purple-600 font-bold">$12.99</span>
+                                    </div>
+                                </div>
+
+                                <button className="w-full mt-4 py-2 px-4 bg-purple-50 text-purple-600 font-bold rounded-lg hover:bg-purple-100 transition-colors text-sm">
+                                    Ver detalles
+                                </button>
                             </div>
-                            <button className="w-full mt-4 py-2 px-4 bg-purple-50 text-purple-600 font-semibold rounded-lg hover:bg-purple-100 transition-colors text-sm">Ver detalles</button>
                         </div>
-                    </div>
 
-                    <div className="px-6 mt-12">
-                        <h2 className="text-lg font-bold text-gray-900 mb-4">Accesos rápidos</h2>
-                        <div className="grid grid-cols-2 gap-3">
-                            <button onClick={() => onNext('service')} className="card cursor-pointer text-center py-6 hover:shadow-lg transition-all">
-                                <p className="text-2xl mb-2">🏃</p>
-                                <p className="font-semibold text-gray-900 text-sm">Pedido Rápido</p>
-                            </button>
-                            <button onClick={() => onNext('history')} className="card cursor-pointer text-center py-6 hover:shadow-lg transition-all">
-                                <p className="text-2xl mb-2">📋</p>
-                                <p className="font-semibold text-gray-900 text-sm">Historial</p>
-                            </button>
-                            <button className="card cursor-pointer text-center py-6 hover:shadow-lg transition-all">
-                                <p className="text-2xl mb-2">🎁</p>
-                                <p className="font-semibold text-gray-900 text-sm">Promociones</p>
-                            </button>
-                            <button className="card cursor-pointer text-center py-6 hover:shadow-lg transition-all">
-                                <p className="text-2xl mb-2">❓</p>
-                                <p className="font-semibold text-gray-900 text-sm">Soporte</p>
-                            </button>
+                        <div className="section-divider"></div>
+
+                        {/* Accesos Rápidos */}
+                        <div>
+                            <h2 className="text-lg font-bold text-gray-900 mb-4">Acceso rápido</h2>
+                            <div className="grid grid-cols-2 gap-4">
+                                <button onClick={() => onNext('service')} className="service-card text-center py-8 flex flex-col items-center justify-center space-y-3">
+                                    <span className="text-4xl">🏃</span>
+                                    <p className="font-bold text-gray-900">Pedido Rápido</p>
+                                </button>
+
+                                <button onClick={() => onNext('history')} className="service-card text-center py-8 flex flex-col items-center justify-center space-y-3">
+                                    <span className="text-4xl">{Icons.history}</span>
+                                    <p className="font-bold text-gray-900">Historial</p>
+                                </button>
+
+                                <button className="service-card text-center py-8 flex flex-col items-center justify-center space-y-3">
+                                    <span className="text-4xl">{Icons.gift}</span>
+                                    <p className="font-bold text-gray-900">Ofertas</p>
+                                </button>
+
+                                <button className="service-card text-center py-8 flex flex-col items-center justify-center space-y-3">
+                                    <span className="text-4xl">{Icons.help}</span>
+                                    <p className="font-bold text-gray-900">Soporte</p>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             );
         }
 
-        // PANTALLA: Seleccionar Servicio
+        // PANTALLA: Seleccionar Servicio Mejorada
         function SelectService({ onNext }) {
             const [selected, setSelected] = useState(null);
 
             const services = [
-                { id: 1, name: 'Lavado Completo', description: 'Incluye lavado, secado y planchado', price: '12,99€', icon: '👕' },
-                { id: 2, name: 'Lavado Exprés', description: 'Solo lavado y secado', price: '8,99€', icon: '⚡' },
-                { id: 3, name: 'Planchado', description: 'Planchado profesional', price: '4,99€', icon: '🔥' },
-                { id: 4, name: 'Lavado Delicado', description: 'Para prendas sensibles', price: '15,99€', icon: '✨' },
-                { id: 5, name: 'Lavado Deportivo', description: 'Especializado en ropa deportiva', price: '10,99€', icon: '💪' },
-                { id: 6, name: 'Servicio Premium', description: 'Incluye todo + aroma premium', price: '19,99€', icon: '👑' },
+                { id: 1, name: 'Lavado Completo', desc: 'Lavado, secado y planchado', price: '12.99', icon: '👕', color: 'from-blue-500 to-cyan-500' },
+                { id: 2, name: 'Lavado Exprés', desc: 'Solo lavado y secado', price: '8.99', icon: '⚡', color: 'from-yellow-500 to-orange-500' },
+                { id: 3, name: 'Planchado Pro', desc: 'Planchado profesional', price: '4.99', icon: '🔥', color: 'from-red-500 to-pink-500' },
+                { id: 4, name: 'Lavado Delicado', desc: 'Prendas sensibles', price: '15.99', icon: '✨', color: 'from-purple-500 to-pink-500' },
+                { id: 5, name: 'Deportivo', desc: 'Ropa deportiva especializada', price: '10.99', icon: '💪', color: 'from-green-500 to-teal-500' },
+                { id: 6, name: 'Premium Total', desc: 'Todo incluido + aroma premium', price: '19.99', icon: '👑', color: 'from-amber-500 to-orange-500' },
             ];
 
             return (
-                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
-                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4">
-                        <button onClick={() => onNext('home')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl">←</button>
-                        <h1 className="text-2xl font-bold text-gray-900">Selecciona servicio</h1>
+                <div className="screen active flex flex-col h-full">
+                    <div className="header-sticky flex items-center gap-4">
+                        <button onClick={() => onNext('home')} className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors">
+                            <span className="text-2xl">{Icons.back}</span>
+                        </button>
+                        <h1 className="text-xl font-bold text-gray-900">Elige tu servicio</h1>
                     </div>
 
-                    <div className="px-6 py-8 space-y-4">
+                    <div className="flex-1 px-6 py-6 space-y-4 overflow-y-auto">
                         {services.map((service) => (
-                            <button key={service.id} onClick={() => setSelected(service.id)} className={`w-full transition-all transform hover:scale-105 ${selected === service.id ? 'ring-2 ring-purple-600 shadow-lg' : 'border border-gray-200 hover:border-gray-300'} rounded-2xl p-4 bg-white text-left`}>
-                                <div className="flex items-start justify-between mb-3">
-                                    <span className="text-3xl">{service.icon}</span>
-                                    {selected === service.id && <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm">✓</div>}
+                            <button
+                                key={service.id}
+                                onClick={() => setSelected(service.id)}
+                                className={`service-card w-full p-0 overflow-hidden ${selected === service.id ? 'ring-2 ring-purple-600 border-purple-300' : ''}`}
+                            >
+                                <div className="flex gap-4">
+                                    <div className={`w-20 h-20 bg-gradient-to-br ${service.color} flex items-center justify-center text-3xl flex-shrink-0`}>
+                                        {service.icon}
+                                    </div>
+
+                                    <div className="flex-1 p-4 text-left flex flex-col justify-between">
+                                        <div>
+                                            <h3 className="font-bold text-gray-900">{service.name}</h3>
+                                            <p className="text-xs text-gray-600 mt-1">{service.desc}</p>
+                                        </div>
+                                        <p className="text-lg font-bold text-purple-600">${service.price}</p>
+                                    </div>
+
+                                    {selected === service.id && (
+                                        <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold self-center mr-4">
+                                            {Icons.checkmark}
+                                        </div>
+                                    )}
                                 </div>
-                                <h3 className="font-bold text-gray-900 text-lg">{service.name}</h3>
-                                <p className="text-sm text-gray-600 mt-1">{service.description}</p>
-                                <p className="text-lg font-bold text-purple-600 mt-2">{service.price}</p>
                             </button>
                         ))}
                     </div>
 
-                    <div className="fixed bottom-20 left-0 right-0 max-w-md mx-auto px-6 pb-4">
-                        <button onClick={() => selected && onNext('address')} disabled={!selected} className={`btn-primary ${!selected ? 'opacity-50 cursor-not-allowed' : ''}`}>Continuar</button>
+                    <div className="sticky bottom-20 left-0 right-0 bg-gradient-to-t from-white to-transparent px-6 pb-4 pt-4">
+                        <button
+                            onClick={() => selected && onNext('address')}
+                            disabled={!selected}
+                            className={`btn-primary ${!selected ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        >
+                            Continuar con servicio
+                        </button>
                     </div>
                 </div>
             );
         }
 
-        // PANTALLA: Dirección y Horario
+        // PANTALLA: Dirección y Horario Mejorada
         function AddressSchedule({ onNext }) {
-            const [address, setAddress] = useState('Calle Principal 123, Apt 4B, Madrid');
+            const [address, setAddress] = useState('Calle Principal 123, Apt 4B');
             const [time, setTime] = useState('09:00');
             const [selectedDate, setSelectedDate] = useState('today');
 
             const dates = [
                 { id: 'today', label: 'Hoy' },
                 { id: 'tomorrow', label: 'Mañana' },
-                { id: 'next', label: 'Próximos' },
+                { id: 'next', label: 'Próximo' },
             ];
 
             const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
 
             return (
-                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
-                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4">
-                        <button onClick={() => onNext('service')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl">←</button>
-                        <h1 className="text-2xl font-bold text-gray-900">Dirección y hora</h1>
+                <div className="screen active flex flex-col h-full">
+                    <div className="header-sticky flex items-center gap-4">
+                        <button onClick={() => onNext('service')} className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors">
+                            <span className="text-2xl">{Icons.back}</span>
+                        </button>
+                        <h1 className="text-xl font-bold text-gray-900">Cuándo y dónde</h1>
                     </div>
 
-                    <div className="px-6 py-8 space-y-8">
-                        <div>
-                            <label className="block text-sm font-semibold text-gray-900 mb-3">📍 Dirección de recogida</label>
+                    <div className="flex-1 px-6 py-6 space-y-8 overflow-y-auto">
+                        {/* Dirección */}
+                        <div className="card-gradient">
+                            <label className="block text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                <span className="text-xl">{Icons.location}</span>
+                                Dirección de recogida
+                            </label>
                             <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} className="input-field" />
-                            <p className="text-xs text-gray-500 mt-2">Recogida gratuita en tu domicilio</p>
+                            <p className="text-xs text-purple-600 font-semibold mt-3">✓ Recogida gratuita en tu domicilio</p>
                         </div>
 
+                        {/* Fecha */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-900 mb-3">📅 Fecha de recogida</label>
-                            <div className="grid grid-cols-3 gap-2">
+                            <label className="block text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                <span className="text-xl">{Icons.calendar}</span>
+                                Fecha de recogida
+                            </label>
+                            <div className="grid grid-cols-3 gap-3">
                                 {dates.map((date) => (
-                                    <button key={date.id} onClick={() => setSelectedDate(date.id)} className={`py-3 px-4 rounded-xl font-semibold transition-all ${selectedDate === date.id ? 'bg-purple-600 text-white shadow-lg' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}>
+                                    <button
+                                        key={date.id}
+                                        onClick={() => setSelectedDate(date.id)}
+                                        className={`py-3 px-4 rounded-xl font-bold transition-all duration-200 ${
+                                            selectedDate === date.id
+                                                ? 'bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-lg'
+                                                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                                        }`}
+                                    >
                                         {date.label}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
+                        {/* Hora */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-900 mb-3">⏰ Hora preferida</label>
-                            <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto">
+                            <label className="block text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                <span className="text-xl">{Icons.clock}</span>
+                                Hora preferida
+                            </label>
+                            <div className="grid grid-cols-4 gap-2">
                                 {times.map((t) => (
-                                    <button key={t} onClick={() => setTime(t)} className={`py-3 px-4 rounded-xl font-semibold transition-all ${time === t ? 'bg-purple-600 text-white shadow-lg' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}>
+                                    <button
+                                        key={t}
+                                        onClick={() => setTime(t)}
+                                        className={`py-2.5 px-2 rounded-lg font-bold text-sm transition-all duration-200 ${
+                                            time === t
+                                                ? 'bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-lg'
+                                                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+                                        }`}
+                                    >
                                         {t}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                            <p className="text-sm text-blue-900 font-semibold">✓ Recogida confirmada</p>
-                            <p className="text-xs text-blue-800 mt-1">Llegaremos a recoger tu ropa en la franja horaria seleccionada</p>
+                        {/* Confirmación */}
+                        <div className="bg-green-50 border-2 border-green-300 rounded-2xl p-4">
+                            <p className="text-sm text-green-900 font-bold">{Icons.check_circle} Recogida confirmada</p>
+                            <p className="text-xs text-green-800 mt-2">Llegaremos en la franja horaria seleccionada</p>
                         </div>
                     </div>
 
-                    <div className="fixed bottom-20 left-0 right-0 max-w-md mx-auto px-6 pb-4">
-                        <button onClick={() => onNext('confirmation')} className="btn-primary">Continuar</button>
+                    <div className="sticky bottom-20 left-0 right-0 bg-gradient-to-t from-white to-transparent px-6 pb-4 pt-4">
+                        <button onClick={() => onNext('confirmation')} className="btn-primary">
+                            Siguiente paso
+                        </button>
                     </div>
                 </div>
             );
         }
 
-        // PANTALLA: Confirmación
+        // PANTALLA: Confirmación Mejorada
         function Confirmation({ onNext }) {
             const [promoCode, setPromoCode] = useState('');
 
@@ -324,89 +622,99 @@
                 address: 'Calle Principal 123, Apt 4B',
                 date: 'Hoy',
                 time: '09:00',
+                items: 5,
                 basePrice: 12.99,
                 delivery: 2.00,
-                discount: 0,
             };
 
-            const total = order.basePrice + order.delivery - order.discount;
+            const total = order.basePrice + order.delivery;
 
             return (
-                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
-                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4">
-                        <button onClick={() => onNext('address')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl">←</button>
-                        <h1 className="text-2xl font-bold text-gray-900">Resumen pedido</h1>
+                <div className="screen active flex flex-col h-full">
+                    <div className="header-sticky flex items-center gap-4">
+                        <button onClick={() => onNext('address')} className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors">
+                            <span className="text-2xl">{Icons.back}</span>
+                        </button>
+                        <h1 className="text-xl font-bold text-gray-900">Resumen del pedido</h1>
                     </div>
 
-                    <div className="px-6 py-8 space-y-6">
-                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 space-y-4">
+                    <div className="flex-1 px-6 py-6 space-y-6 overflow-y-auto">
+                        {/* Servicio Destacado */}
+                        <div className="card-gradient border-2 border-purple-300 p-6">
                             <div className="flex items-start justify-between">
                                 <div>
-                                    <p className="text-sm text-purple-700 font-semibold">Servicio</p>
-                                    <p className="text-2xl font-bold text-purple-900 mt-1">{order.service}</p>
+                                    <p className="text-xs font-bold text-purple-700 uppercase tracking-wider">Tu servicio</p>
+                                    <p className="text-2xl font-bold text-purple-900 mt-2">{order.service}</p>
+                                    <p className="text-sm text-purple-700 mt-1">Incluye: Lavado, secado y planchado</p>
                                 </div>
-                                <span className="text-2xl">✓</span>
+                                <span className="text-3xl">{Icons.checkmark}</span>
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <div className="flex items-center text-gray-700">
-                                <span className="mr-3">📍</span>
-                                <div>
-                                    <p className="text-sm text-gray-600">Recogida</p>
-                                    <p className="font-semibold">{order.address}</p>
+                        {/* Detalles */}
+                        <div className="card p-6 space-y-4">
+                            <div className="flex items-center gap-3 pb-4 border-b-2 border-gray-100">
+                                <span className="text-2xl">{Icons.location}</span>
+                                <div className="text-left">
+                                    <p className="text-xs text-gray-600 font-bold">Recogida en</p>
+                                    <p className="text-sm font-bold text-gray-900">{order.address}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center text-gray-700">
-                                <span className="mr-3">⏰</span>
-                                <div>
-                                    <p className="text-sm text-gray-600">Fecha y hora</p>
-                                    <p className="font-semibold">{order.date} a las {order.time}</p>
+
+                            <div className="flex items-center gap-3">
+                                <span className="text-2xl">{Icons.clock}</span>
+                                <div className="text-left">
+                                    <p className="text-xs text-gray-600 font-bold">Fecha y hora</p>
+                                    <p className="text-sm font-bold text-gray-900">{order.date} a las {order.time}</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-gray-50 rounded-xl p-4 space-y-3 border border-gray-200">
-                            <div className="flex justify-between">
-                                <p className="text-gray-600">Servicio</p>
-                                <p className="font-semibold text-gray-900">${order.basePrice.toFixed(2)}</p>
+                        {/* Precios */}
+                        <div className="bg-gray-50 rounded-2xl p-6 space-y-4 border-2 border-gray-200">
+                            <div className="flex justify-between items-center pb-3 border-b-2 border-gray-200">
+                                <p className="text-gray-700 font-semibold">Servicio ({order.items} prendas)</p>
+                                <p className="font-bold text-gray-900">${order.basePrice.toFixed(2)}</p>
                             </div>
-                            <div className="flex justify-between">
-                                <p className="text-gray-600">Envío y recogida</p>
-                                <p className="font-semibold text-gray-900">${order.delivery.toFixed(2)}</p>
+                            <div className="flex justify-between items-center pb-3 border-b-2 border-gray-200">
+                                <p className="text-gray-700 font-semibold">Recogida y entrega</p>
+                                <p className="font-bold text-gray-900">${order.delivery.toFixed(2)}</p>
                             </div>
-                            <div className="border-t border-gray-200 pt-3 flex justify-between">
-                                <p className="font-bold text-gray-900">Total</p>
-                                <p className="text-2xl font-bold text-purple-600">${total.toFixed(2)}</p>
+                            <div className="flex justify-between items-center pt-2">
+                                <p className="text-lg font-bold text-gray-900">Total</p>
+                                <p className="text-3xl font-bold text-transparent bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text">${total.toFixed(2)}</p>
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <label className="block text-sm font-semibold text-gray-900">Código promocional (opcional)</label>
+                        {/* Código Promo */}
+                        <div>
+                            <label className="block text-xs font-bold text-gray-900 mb-3 uppercase tracking-wider">Código promocional</label>
                             <div className="flex gap-2">
                                 <input type="text" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} placeholder="PROMO2024" className="input-field flex-1" />
-                                <button className="px-4 py-3 bg-gray-200 text-gray-900 font-semibold rounded-xl hover:bg-gray-300 transition-colors">Aplicar</button>
+                                <button className="px-4 py-3.5 bg-gray-200 text-gray-900 font-bold rounded-xl hover:bg-gray-300 transition-colors">
+                                    Aplicar
+                                </button>
                             </div>
                         </div>
 
-                        <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                            <p className="text-sm text-green-900 font-semibold">✓ Cobertura garantizada</p>
-                            <p className="text-xs text-green-800 mt-1">Tu ropa llegará limpia y en perfecto estado o te devolvemos el dinero</p>
+                        {/* Garantía */}
+                        <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-5">
+                            <p className="text-sm text-blue-900 font-bold">{Icons.shield} Garantía 100%</p>
+                            <p className="text-xs text-blue-800 mt-2">Tu ropa llegará perfecta o devolvemos tu dinero sin preguntas</p>
                         </div>
                     </div>
 
-                    <div className="fixed bottom-20 left-0 right-0 max-w-md mx-auto px-6 pb-4">
-                        <button onClick={() => onNext('payment')} className="btn-primary">Confirmar y pagar</button>
+                    <div className="sticky bottom-20 left-0 right-0 bg-gradient-to-t from-white to-transparent px-6 pb-4 pt-4">
+                        <button onClick={() => onNext('payment')} className="btn-primary">
+                            Confirmar y pagar
+                        </button>
                     </div>
                 </div>
             );
         }
 
-        // PANTALLA: Pago
+        // PANTALLA: Pago Mejorada
         function Payment({ onNext }) {
-            const [cardNumber, setCardNumber] = useState('4532 1234 5678 9010');
-            const [expiry, setExpiry] = useState('12/26');
-            const [cvc, setCvc] = useState('123');
             const [processing, setProcessing] = useState(false);
             const [completed, setCompleted] = useState(false);
 
@@ -416,157 +724,217 @@
                 setTimeout(() => {
                     setProcessing(false);
                     setCompleted(true);
-                    setTimeout(() => {
-                        onNext('tracking');
-                    }, 2000);
-                }, 2000);
+                    setTimeout(() => onNext('tracking'), 2000);
+                }, 2500);
             };
 
             return (
-                <div className="h-screen w-full bg-white overflow-y-auto pb-20 fade-in">
-                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4">
-                        <button onClick={() => !processing && !completed && onNext('confirmation')} disabled={processing || completed} className={`p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl ${processing || completed ? 'cursor-not-allowed opacity-50' : ''}`}>←</button>
-                        <h1 className="text-2xl font-bold text-gray-900">Pago</h1>
+                <div className="screen active flex flex-col h-full">
+                    <div className="header-sticky flex items-center gap-4">
+                        <button onClick={() => !processing && !completed && onNext('confirmation')} disabled={processing || completed} className={`p-2.5 hover:bg-gray-100 rounded-lg transition-colors ${processing || completed ? 'cursor-not-allowed opacity-50' : ''}`}>
+                            <span className="text-2xl">{Icons.back}</span>
+                        </button>
+                        <h1 className="text-xl font-bold text-gray-900">Pago</h1>
                     </div>
 
                     {!completed && (
-                        <form onSubmit={handlePayment} className="px-6 py-8 space-y-8">
-                            <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl p-6 text-white relative overflow-hidden h-48 flex flex-col justify-between">
+                        <form onSubmit={handlePayment} className="flex-1 px-6 py-6 space-y-6 overflow-y-auto">
+                            {/* Tarjeta */}
+                            <div className="bg-gradient-to-br from-purple-600 via-purple-700 to-blue-600 rounded-2xl p-6 text-white shadow-2xl h-48 flex flex-col justify-between">
                                 <div>
-                                    <p className="text-sm opacity-75 font-semibold">Tarjeta de pago</p>
-                                    <p className="text-2xl font-bold mt-8 tracking-widest">{cardNumber}</p>
+                                    <p className="text-xs font-bold opacity-80 uppercase tracking-wider">Tarjeta de pago</p>
+                                    <p className="text-2xl font-bold mt-6 tracking-widest font-mono">4532 •••• •••• 9010</p>
                                 </div>
-                                <div className="flex justify-between">
+                                <div className="flex justify-between items-center">
                                     <div>
-                                        <p className="text-xs opacity-75">Expira</p>
-                                        <p className="font-semibold">{expiry}</p>
+                                        <p className="text-xs opacity-80">Expira</p>
+                                        <p className="font-bold">12/26</p>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-xs opacity-75">CVC</p>
-                                        <p className="font-semibold">•••</p>
-                                    </div>
+                                    <span className="text-3xl">{Icons.pay}</span>
                                 </div>
                             </div>
 
+                            {/* Datos */}
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-semibold text-gray-900 mb-2">Número de tarjeta</label>
-                                    <input type="text" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} placeholder="4532 1234 5678 9010" className="input-field" />
+                                    <label className="block text-xs font-bold text-gray-900 mb-2 uppercase tracking-wider">Número de tarjeta</label>
+                                    <input type="text" defaultValue="4532 1234 5678 9010" disabled className="input-field opacity-70" />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-sm font-semibold text-gray-900 mb-2">Vencimiento</label>
-                                        <input type="text" value={expiry} onChange={(e) => setExpiry(e.target.value)} placeholder="MM/YY" className="input-field" />
+                                        <label className="block text-xs font-bold text-gray-900 mb-2 uppercase tracking-wider">Vencimiento</label>
+                                        <input type="text" defaultValue="12/26" disabled className="input-field opacity-70" />
                                     </div>
                                     <div>
-                                        <label className="block text-sm font-semibold text-gray-900 mb-2">CVC</label>
-                                        <input type="text" value={cvc} onChange={(e) => setCvc(e.target.value)} placeholder="123" className="input-field" />
+                                        <label className="block text-xs font-bold text-gray-900 mb-2 uppercase tracking-wider">CVC</label>
+                                        <input type="text" defaultValue="•••" disabled className="input-field opacity-70" />
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                                <p className="text-xs text-blue-900">🔒 Tu pago está protegido con encriptación SSL de nivel bancario</p>
+                            {/* Seguridad */}
+                            <div className="bg-green-50 border-2 border-green-300 rounded-2xl p-4 flex items-start gap-3">
+                                <span className="text-2xl flex-shrink-0">{Icons.lock}</span>
+                                <p className="text-xs text-green-900 font-bold">Pago protegido con encriptación SSL de nivel bancario</p>
                             </div>
 
-                            <button type="submit" disabled={processing} className={`btn-primary ${processing ? 'opacity-70 cursor-not-allowed' : ''}`}>
-                                {processing ? '⏳ Procesando...' : 'Pagar ahora'}
+                            <button type="submit" disabled={processing} className={`btn-primary ${processing ? 'opacity-70' : ''}`}>
+                                {processing ? (
+                                    <span className="flex items-center justify-center">
+                                        <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full loader mr-2"></span>
+                                        Procesando pago...
+                                    </span>
+                                ) : (
+                                    'Pagar $14.99'
+                                )}
                             </button>
                         </form>
                     )}
 
                     {completed && (
-                        <div className="flex flex-col items-center justify-center h-96 space-y-6 fade-in">
-                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center animate-bounce text-3xl">✓</div>
-                            <div className="text-center space-y-2">
-                                <h2 className="text-3xl font-bold text-gray-900">¡Pagado!</h2>
-                                <p className="text-gray-600">Tu pedido ha sido confirmado</p>
+                        <div className="flex-1 flex flex-col items-center justify-center space-y-8 px-6">
+                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center animate-bounce">
+                                <span className="text-5xl">{Icons.success}</span>
                             </div>
-                            <p className="text-sm text-gray-500">Redirigiendo al rastreo en tiempo real...</p>
+
+                            <div className="text-center space-y-3">
+                                <h2 className="text-3xl font-bold text-gray-900">¡Pagado!</h2>
+                                <p className="text-gray-600">Tu pedido ha sido confirmado exitosamente</p>
+                                <p className="text-sm text-purple-600 font-bold">Redirigiendo...</p>
+                            </div>
                         </div>
                     )}
                 </div>
             );
         }
 
-        // PANTALLA: Rastreo
+        // PANTALLA: Rastreo Mejorada
         function Tracking({ onNext }) {
             const [status, setStatus] = useState(0);
 
             const statuses = [
-                { label: 'Confirmado', icon: '✓' },
-                { label: 'En camino a recoger', icon: '🚗' },
-                { label: 'Recogiendo', icon: '📦' },
-                { label: 'En proceso', icon: '🌀' },
-                { label: 'En camino a entregar', icon: '🚚' },
-                { label: 'Entregado', icon: '✓' },
+                { label: 'Confirmado', icon: '✓', desc: 'Pedido confirmado' },
+                { label: 'En camino', icon: '🚗', desc: 'Recogiendo tu ropa' },
+                { label: 'En proceso', icon: '🌀', desc: 'Lavando y secando' },
+                { label: 'En entrega', icon: '🚚', desc: 'Llevando a tu casa' },
             ];
 
             useEffect(() => {
                 const interval = setInterval(() => {
                     setStatus((prev) => Math.min(prev + 1, statuses.length - 1));
-                }, 3000);
+                }, 4000);
                 return () => clearInterval(interval);
             }, []);
 
+            const progress = ((status + 1) / statuses.length) * 100;
+
             return (
-                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
-                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4">
-                        <button onClick={() => onNext('home')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl">←</button>
-                        <h1 className="text-2xl font-bold text-gray-900">Rastreo en vivo</h1>
+                <div className="screen active flex flex-col h-full">
+                    <div className="header-sticky flex items-center gap-4">
+                        <button onClick={() => onNext('home')} className="p-2.5 hover:bg-gray-100 rounded-lg transition-colors">
+                            <span className="text-2xl">{Icons.back}</span>
+                        </button>
+                        <h1 className="text-xl font-bold text-gray-900">Rastreo en vivo</h1>
                     </div>
 
-                    <div className="px-6 py-8 space-y-8">
-                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200">
+                    <div className="flex-1 px-6 py-6 space-y-8 overflow-y-auto">
+                        {/* Estado Principal */}
+                        <div className="card-gradient border-2 border-blue-300">
                             <div className="flex items-center justify-between mb-4">
                                 <h2 className="text-lg font-bold text-blue-900">Tu ropa está</h2>
-                                <span className="inline-block px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">{statuses[status].label}</span>
+                                <span className="badge badge-processing text-sm font-bold">
+                                    {Icons.clock} {statuses[status].label}
+                                </span>
                             </div>
+
                             <div className="space-y-3">
-                                <div className="flex items-center text-blue-900">📍 A 2.3 km de tu hogar</div>
-                                <div className="flex items-center text-blue-900">⏱️ Llegará en ~8 minutos</div>
+                                <div className="flex items-center gap-2 text-blue-900 font-semibold">
+                                    <span className="text-2xl">{Icons.location}</span>
+                                    A 2.3 km de tu hogar
+                                </div>
+                                <div className="flex items-center gap-2 text-blue-900 font-semibold">
+                                    <span className="text-2xl">{Icons.clock}</span>
+                                    Llegará en ~8 minutos
+                                </div>
                             </div>
                         </div>
 
+                        {/* Barra de Progreso */}
+                        <div>
+                            <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-gradient-to-r from-purple-600 to-blue-600 transition-all duration-500"
+                                    style={{ width: `${progress}%` }}
+                                ></div>
+                            </div>
+                            <p className="text-xs text-gray-600 font-bold mt-2 text-center">{Math.round(progress)}% completado</p>
+                        </div>
+
+                        {/* Timeline */}
                         <div className="space-y-4">
                             {statuses.map((s, index) => (
                                 <div key={index} className="flex gap-4">
                                     <div className="flex flex-col items-center">
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${index <= status ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-400'}`}>
-                                            {index <= status ? '✓' : index + 1}
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl transition-all duration-300 ${index <= status ? 'bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-lg scale-110' : 'bg-gray-200 text-gray-400'}`}>
+                                            {index <= status ? Icons.checkmark : index + 1}
                                         </div>
-                                        {index < statuses.length - 1 && <div className={`w-1 h-12 mt-2 ${index < status ? 'bg-purple-600' : 'bg-gray-200'}`}></div>}
+                                        {index < statuses.length - 1 && (
+                                            <div className={`w-1 h-16 mt-2 transition-all duration-500 ${index < status ? 'bg-purple-600' : 'bg-gray-200'}`}></div>
+                                        )}
                                     </div>
+
                                     <div className="flex-1 pt-2">
-                                        <p className={`font-semibold ${index <= status ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</p>
-                                        {index === status && <p className="text-xs text-purple-600 font-semibold mt-1">En progreso...</p>}
+                                        <p className={`font-bold text-lg transition-colors ${index <= status ? 'text-gray-900' : 'text-gray-400'}`}>
+                                            {s.label}
+                                        </p>
+                                        <p className={`text-sm transition-colors ${index <= status ? 'text-gray-600' : 'text-gray-400'}`}>
+                                            {s.desc}
+                                        </p>
+                                        {index === status && (
+                                            <p className="text-xs text-purple-600 font-bold mt-2 animate-pulse">
+                                                {Icons.clock} En progreso...
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="bg-gray-50 rounded-2xl p-6 space-y-4">
-                            <h3 className="font-bold text-gray-900">Conductor</h3>
+                        {/* Conductor */}
+                        <div className="card p-6 space-y-4">
+                            <h3 className="font-bold text-gray-900 text-lg">Tu conductor</h3>
+
                             <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold">JG</div>
+                                <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold">
+                                    JG
+                                </div>
                                 <div className="flex-1">
-                                    <p className="font-semibold text-gray-900">Juan García</p>
-                                    <p className="text-sm text-gray-600">⭐ 4.9 • Toyota Yaris Plateado</p>
+                                    <p className="font-bold text-gray-900">Juan García</p>
+                                    <p className="text-sm text-gray-600">⭐ 4.9 • Toyota Yaris Blanco</p>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-3">
-                                <button className="flex items-center justify-center gap-2 py-2 px-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-semibold">📞 Llamar</button>
-                                <button className="flex items-center justify-center gap-2 py-2 px-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-semibold">💬 Chat</button>
+
+                            <div className="grid grid-cols-2 gap-3 pt-3 border-t-2 border-gray-100">
+                                <button className="py-3 px-3 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors font-bold flex items-center justify-center gap-2">
+                                    <span>{Icons.phone_call}</span>
+                                    <span className="text-sm">Llamar</span>
+                                </button>
+                                <button className="py-3 px-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-bold flex items-center justify-center gap-2">
+                                    <span>{Icons.chat}</span>
+                                    <span className="text-sm">Chat</span>
+                                </button>
                             </div>
                         </div>
 
                         {status === statuses.length - 1 && (
-                            <div className="bg-green-50 border-2 border-green-400 rounded-2xl p-6 text-center space-y-4 fade-in">
-                                <div className="text-5xl">🎉</div>
-                                <h3 className="font-bold text-green-900 text-lg">¡Tu ropa llegó!</h3>
+                            <div className="card-gradient border-2 border-green-300 text-center space-y-4 p-6">
+                                <span className="text-6xl inline-block animate-bounce">{Icons.success}</span>
+                                <h3 className="text-xl font-bold text-green-900">¡Tu ropa llegó!</h3>
                                 <p className="text-sm text-green-800">Perfectamente lavada, secada y planchada</p>
-                                <button onClick={() => onNext('home')} className="btn-primary">Volver al inicio</button>
+                                <button onClick={() => onNext('home')} className="btn-primary mt-4">
+                                    Volver al inicio
+                                </button>
                             </div>
                         )}
                     </div>
@@ -574,121 +942,197 @@
             );
         }
 
-        // PANTALLA: Historial
+        // PANTALLA: Historial Mejorado
         function OrderHistory({ onNext }) {
             const orders = [
-                { id: '#12345', service: 'Lavado Completo', status: 'Entregado', date: '5 de Mayo', items: 5, price: '12.99' },
-                { id: '#12344', service: 'Lavado Exprés', status: 'Entregado', date: '3 de Mayo', items: 3, price: '8.99' },
-                { id: '#12343', service: 'Servicio Premium', status: 'Entregado', date: '1 de Mayo', items: 8, price: '19.99' },
-                { id: '#12342', service: 'Planchado', status: 'Entregado', date: '28 de Abril', items: 4, price: '4.99' },
+                { id: '#12345', service: 'Lavado Completo', status: 'Entregado', date: '5 de Mayo', items: 5, price: '12.99', icon: '👕' },
+                { id: '#12344', service: 'Lavado Exprés', status: 'Entregado', date: '3 de Mayo', items: 3, price: '8.99', icon: '⚡' },
+                { id: '#12343', service: 'Premium Total', status: 'Entregado', date: '1 de Mayo', items: 8, price: '19.99', icon: '👑' },
+                { id: '#12342', service: 'Planchado', status: 'Entregado', date: '28 de Abril', items: 4, price: '4.99', icon: '🔥' },
             ];
 
             return (
-                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
-                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4">
-                        <h1 className="text-2xl font-bold text-gray-900">Historial</h1>
+                <div className="screen active flex flex-col h-full">
+                    <div className="header-sticky">
+                        <h1 className="text-xl font-bold text-gray-900">Tu historial</h1>
                     </div>
 
-                    <div className="px-6 py-8 space-y-4">
+                    <div className="flex-1 px-6 py-6 space-y-4 overflow-y-auto">
                         {orders.map((order) => (
-                            <div key={order.id} className="card cursor-pointer hover:shadow-lg transition-all">
-                                <div className="flex items-start justify-between mb-3">
-                                    <div className="flex-1">
-                                        <p className="text-sm text-gray-600 font-medium">Pedido {order.id}</p>
-                                        <p className="text-gray-900 font-bold mt-1">{order.service}</p>
+                            <div key={order.id} className="card p-0 overflow-hidden">
+                                <div className="flex gap-4">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center text-2xl flex-shrink-0">
+                                        {order.icon}
                                     </div>
-                                    <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">{order.status}</span>
-                                </div>
-                                <div className="space-y-2 py-3 border-t border-gray-100">
-                                    <div className="flex items-center justify-between text-sm text-gray-600">
-                                        <span>{order.items} prendas</span>
-                                        <span>{order.date}</span>
+
+                                    <div className="flex-1 p-4">
+                                        <div className="flex items-start justify-between mb-2">
+                                            <div>
+                                                <p className="text-xs text-gray-600 font-bold">Pedido {order.id}</p>
+                                                <p className="font-bold text-gray-900">{order.service}</p>
+                                            </div>
+                                            <span className="badge badge-success text-xs">{Icons.check} Entregado</span>
+                                        </div>
+
+                                        <div className="flex items-center justify-between text-sm">
+                                            <span className="text-gray-600 font-semibold">{order.date} • {order.items} prendas</span>
+                                            <span className="font-bold text-purple-600">${order.price}</span>
+                                        </div>
                                     </div>
-                                    <p className="font-bold text-purple-600">${order.price}</p>
                                 </div>
-                                <div className="grid grid-cols-2 gap-2 pt-3 border-t border-gray-100">
-                                    <button className="flex items-center justify-center gap-2 py-2 px-3 bg-purple-50 text-purple-600 font-semibold rounded-lg hover:bg-purple-100 transition-colors text-sm">🔄 Repetir</button>
-                                    <button className="flex items-center justify-center gap-2 py-2 px-3 bg-gray-50 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition-colors text-sm">📥 Recibo</button>
+
+                                <div className="flex gap-2 p-4 bg-gray-50 border-t-2 border-gray-100">
+                                    <button className="flex-1 py-2 px-3 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors font-bold text-xs flex items-center justify-center gap-2">
+                                        {Icons.cycle}
+                                        Repetir
+                                    </button>
+                                    <button className="flex-1 py-2 px-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-bold text-xs flex items-center justify-center gap-2">
+                                        {Icons.download}
+                                        Recibo
+                                    </button>
                                 </div>
                             </div>
                         ))}
                     </div>
 
-                    <div className="fixed bottom-20 left-0 right-0 max-w-md mx-auto px-6 pb-4">
-                        <button onClick={() => onNext('home')} className="w-full py-3 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 transition-colors">Nuevo pedido</button>
+                    <div className="sticky bottom-20 left-0 right-0 bg-gradient-to-t from-white to-transparent px-6 pb-4 pt-4">
+                        <button onClick={() => onNext('home')} className="btn-primary">
+                            Nuevo pedido
+                        </button>
                     </div>
                 </div>
             );
         }
 
-        // PANTALLA: Perfil
+        // PANTALLA: Perfil Mejorado
         function Profile({ onNext }) {
             return (
-                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
-                    <div className="bg-gradient-to-br from-purple-600 to-purple-700 text-white px-6 py-12 space-y-4">
-                        <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-2xl">👤</div>
+                <div className="screen active flex flex-col h-full">
+                    {/* Header Premium */}
+                    <div className="bg-gradient-to-br from-purple-600 via-purple-700 to-blue-600 text-white px-6 py-12 space-y-6">
+                        <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center text-3xl backdrop-blur-md border-2 border-white/30">
+                            {Icons.user}
+                        </div>
+
                         <div>
-                            <h1 className="text-2xl font-bold">Carolina García</h1>
-                            <p className="text-purple-100 mt-1">carolina@example.com</p>
+                            <h1 className="text-3xl font-bold">Carolina García</h1>
+                            <p className="text-purple-100 mt-2 font-semibold">carolina@example.com</p>
                         </div>
-                        <div className="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur">
-                            <p className="text-xs text-purple-100">Saldo disponible</p>
-                            <p className="text-2xl font-bold mt-1">$15.50</p>
+
+                        <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-md border border-white/20">
+                            <p className="text-xs font-bold text-purple-100 uppercase tracking-wider">Saldo disponible</p>
+                            <p className="text-3xl font-bold mt-1">$15.50</p>
                         </div>
                     </div>
 
-                    <div className="mt-8">
-                        <div className="px-6 py-3 bg-gray-50"><p className="text-xs font-bold text-gray-500 uppercase">Mi Información</p></div>
-                        <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 border-b border-gray-100">
-                            <span className="text-2xl">👤</span>
-                            <div className="text-left flex-1">
-                                <p className="font-semibold text-gray-900">Perfil</p>
-                                <p className="text-sm text-gray-500">+34 600 123 456</p>
+                    <div className="flex-1 overflow-y-auto">
+                        {/* Mi Información */}
+                        <div className="mt-8">
+                            <div className="px-6 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
+                                <p className="text-xs font-bold text-gray-600 uppercase tracking-widest">Mi Información</p>
                             </div>
-                            <span className="text-2xl">→</span>
-                        </button>
-                        <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 border-b border-gray-100">
-                            <span className="text-2xl">📍</span>
-                            <div className="text-left flex-1">
-                                <p className="font-semibold text-gray-900">Direcciones</p>
-                                <p className="text-sm text-gray-500">3 direcciones</p>
-                            </div>
-                            <span className="text-2xl">→</span>
-                        </button>
-                        <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 border-b border-gray-100">
-                            <span className="text-2xl">💳</span>
-                            <div className="text-left flex-1">
-                                <p className="font-semibold text-gray-900">Métodos de pago</p>
-                                <p className="text-sm text-gray-500">2 tarjetas</p>
-                            </div>
-                            <span className="text-2xl">→</span>
-                        </button>
-                    </div>
 
-                    <div className="mt-8">
-                        <div className="px-6 py-3 bg-gray-50"><p className="text-xs font-bold text-gray-500 uppercase">Preferencias</p></div>
-                        <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 border-b border-gray-100">
-                            <span className="text-2xl">🔔</span>
-                            <div className="text-left flex-1">
-                                <p className="font-semibold text-gray-900">Notificaciones</p>
-                            </div>
-                            <span className="text-2xl">→</span>
-                        </button>
-                        <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 border-b border-gray-100">
-                            <span className="text-2xl">⚙️</span>
-                            <div className="text-left flex-1">
-                                <p className="font-semibold text-gray-900">Configuración</p>
-                            </div>
-                            <span className="text-2xl">→</span>
-                        </button>
-                    </div>
+                            <div className="divide-y-2 divide-gray-100">
+                                <button className="w-full px-6 py-5 hover:bg-gray-50 transition-colors flex items-center justify-between group">
+                                    <div className="flex items-center gap-4 text-left flex-1">
+                                        <span className="text-2xl">{Icons.user}</span>
+                                        <div>
+                                            <p className="font-bold text-gray-900">Perfil</p>
+                                            <p className="text-xs text-gray-600">+34 600 123 456</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-gray-400 group-hover:text-gray-600 transition-colors">{Icons.arrow}</span>
+                                </button>
 
-                    <div className="mt-8 px-6">
-                        <button onClick={() => { onNext('onboarding'); }} className="w-full flex items-center gap-4 p-4 text-red-600 hover:bg-red-50 border border-red-200 rounded-xl">
-                            <span className="text-2xl">🚪</span>
-                            <span className="font-semibold flex-1 text-left">Cerrar sesión</span>
-                            <span className="text-2xl">→</span>
-                        </button>
+                                <button className="w-full px-6 py-5 hover:bg-gray-50 transition-colors flex items-center justify-between group">
+                                    <div className="flex items-center gap-4 text-left flex-1">
+                                        <span className="text-2xl">{Icons.location}</span>
+                                        <div>
+                                            <p className="font-bold text-gray-900">Mis direcciones</p>
+                                            <p className="text-xs text-gray-600">3 direcciones guardadas</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-gray-400 group-hover:text-gray-600 transition-colors">{Icons.arrow}</span>
+                                </button>
+
+                                <button className="w-full px-6 py-5 hover:bg-gray-50 transition-colors flex items-center justify-between group">
+                                    <div className="flex items-center gap-4 text-left flex-1">
+                                        <span className="text-2xl">{Icons.pay}</span>
+                                        <div>
+                                            <p className="font-bold text-gray-900">Tarjetas</p>
+                                            <p className="text-xs text-gray-600">2 tarjetas registradas</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-gray-400 group-hover:text-gray-600 transition-colors">{Icons.arrow}</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Preferencias */}
+                        <div className="mt-8">
+                            <div className="px-6 py-3 bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
+                                <p className="text-xs font-bold text-gray-600 uppercase tracking-widest">Preferencias</p>
+                            </div>
+
+                            <div className="divide-y-2 divide-gray-100">
+                                <button className="w-full px-6 py-5 hover:bg-gray-50 transition-colors flex items-center justify-between group">
+                                    <div className="flex items-center gap-4 text-left flex-1">
+                                        <span className="text-2xl">🔔</span>
+                                        <div>
+                                            <p className="font-bold text-gray-900">Notificaciones</p>
+                                            <p className="text-xs text-gray-600">Activas</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-gray-400 group-hover:text-gray-600 transition-colors">{Icons.arrow}</span>
+                                </button>
+
+                                <button className="w-full px-6 py-5 hover:bg-gray-50 transition-colors flex items-center justify-between group">
+                                    <div className="flex items-center gap-4 text-left flex-1">
+                                        <span className="text-2xl">{Icons.settings}</span>
+                                        <div>
+                                            <p className="font-bold text-gray-900">Configuración</p>
+                                            <p className="text-xs text-gray-600">Privacidad y seguridad</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-gray-400 group-hover:text-gray-600 transition-colors">{Icons.arrow}</span>
+                                </button>
+
+                                <button className="w-full px-6 py-5 hover:bg-gray-50 transition-colors flex items-center justify-between group">
+                                    <div className="flex items-center gap-4 text-left flex-1">
+                                        <span className="text-2xl">{Icons.help}</span>
+                                        <div>
+                                            <p className="font-bold text-gray-900">Ayuda y soporte</p>
+                                            <p className="text-xs text-gray-600">Contacta con nosotros</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-gray-400 group-hover:text-gray-600 transition-colors">{Icons.arrow}</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Cerrar Sesión */}
+                        <div className="px-6 mt-8 pb-8">
+                            <button onClick={() => onNext('onboarding')} className="w-full px-6 py-4 bg-red-50 border-2 border-red-300 text-red-600 rounded-2xl hover:bg-red-100 transition-colors font-bold flex items-center justify-between group">
+                                <div className="flex items-center gap-3">
+                                    <span className="text-2xl">{Icons.logout}</span>
+                                    <span>Cerrar sesión</span>
+                                </div>
+                                <span className="group-hover:translate-x-1 transition-transform">{Icons.arrow}</span>
+                            </button>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="border-t-2 border-gray-100 px-6 py-8 text-center space-y-3">
+                            <p className="text-xs text-gray-600 font-semibold">LaundryHub v2.0</p>
+                            <p className="text-xs text-gray-500">Hecho con {Icons.heart} por el equipo LaundryHub</p>
+                            <div className="flex justify-center gap-3 pt-3">
+                                <button className="text-xs text-purple-600 hover:underline font-semibold">Términos</button>
+                                <span className="text-gray-300">•</span>
+                                <button className="text-xs text-purple-600 hover:underline font-semibold">Privacidad</button>
+                                <span className="text-gray-300">•</span>
+                                <button className="text-xs text-purple-600 hover:underline font-semibold">Contacto</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             );
@@ -711,16 +1155,38 @@
                 profile: <Profile onNext={setScreen} />,
             };
 
+            const tabs = [
+                { id: 'home', icon: Icons.home, label: 'Inicio', visible: screen !== 'onboarding' && screen !== 'login' },
+                { id: 'history', icon: Icons.history, label: 'Historial', visible: screen !== 'onboarding' && screen !== 'login' },
+                { id: 'tracking', icon: Icons.location, label: 'Rastreo', visible: screen !== 'onboarding' && screen !== 'login' },
+                { id: 'profile', icon: Icons.settings, label: 'Perfil', visible: screen !== 'onboarding' && screen !== 'login' },
+            ];
+
             return (
-                <div className="mobile-frame flex flex-col overflow-hidden">
-                    <div className="flex-1 overflow-y-auto">
+                <div className="mobile-container">
+                    <div className="screen-wrapper">
                         {screens[screen]}
                     </div>
+
+                    {tabs.some(t => t.visible) && (
+                        <nav className="tab-nav">
+                            {tabs.map(tab => tab.visible && (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setScreen(tab.id)}
+                                    className={`tab-item ${screen === tab.id ? 'active' : ''}`}
+                                >
+                                    <span className="text-2xl">{tab.icon}</span>
+                                    <span className="text-xs font-bold mt-1">{tab.label}</span>
+                                </button>
+                            ))}
+                        </nav>
+                    )}
                 </div>
             );
         }
 
-        ReactDOM.createRoot(document.getElementById('app')).render(<LaundryApp />);
+        ReactDOM.createRoot(document.getElementById('screenWrapper')).render(<LaundryApp />);
     </script>
 </body>
 </html>
