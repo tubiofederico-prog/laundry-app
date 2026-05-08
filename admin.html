@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaundryHub Admin - Panel de Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { margin: 0; padding: 0; background: #f0f9ff; }
+
+        .sidebar { width: 280px; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; height: 100vh; position: fixed; left: 0; top: 0; overflow-y: auto; }
+        .sidebar-header { padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .sidebar-logo { font-size: 32px; margin-bottom: 8px; }
+        .sidebar-title { font-size: 18px; font-weight: 800; }
+        .sidebar-subtitle { font-size: 11px; opacity: 0.8; }
+        .sidebar-nav { padding: 20px 0; }
+        .nav-item { padding: 14px 20px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; font-weight: 500; border-left: 3px solid transparent; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); border-left-color: white; }
+        .nav-item.active { background: rgba(255,255,255,0.15); border-left-color: white; }
+        .nav-icon { font-size: 18px; }
+
+        .main-content { margin-left: 280px; padding: 20px; }
+        .top-bar { background: white; padding: 20px 30px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .top-bar-right { display: flex; align-items: center; gap: 20px; }
+        .user-profile { display: flex; align-items: center; gap: 12px; }
+        .user-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #0ea5e9, #06b6d4); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; }
+
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px; }
+
+        .stat-card { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .stat-card.gradient { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; }
+        .stat-label { font-size: 12px; opacity: 0.8; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; }
+        .stat-value { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
+        .stat-change { font-size: 12px; color: #10b981; }
+        .stat-change.negative { color: #ef4444; }
+
+        .table-container { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f0f9ff; padding: 14px 20px; text-align: left; font-weight: 700; color: #0e7490; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #cffafe; }
+        td { padding: 14px 20px; border-bottom: 1px solid #e5e7eb; }
+        tr:hover { background: #f9fafb; }
+
+        .badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        .badge-success { background: #d1fae5; color: #065f46; }
+        .badge-pending { background: #fef08a; color: #92400e; }
+        .badge-processing { background: #e0f2fe; color: #0c4a6e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+
+        .btn { padding: 10px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 12px; }
+        .btn-primary { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; }
+        .btn-primary:hover { box-shadow: 0 8px 16px rgba(14, 165, 233, 0.3); transform: translateY(-2px); }
+        .btn-secondary { background: #e0f2fe; color: #0c4a6e; }
+        .btn-secondary:hover { background: #cffafe; }
+        .btn-danger { background: #fee2e2; color: #991b1b; }
+        .btn-danger:hover { background: #fecaca; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 12px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+        .modal-header { font-size: 20px; font-weight: 800; color: #0e7490; margin-bottom: 20px; }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-label { display: block; font-weight: 600; color: #0e7490; margin-bottom: 6px; font-size: 13px; }
+        .form-input { width: 100%; padding: 10px 12px; border: 2px solid #cffafe; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 13px; }
+        .form-input:focus { outline: none; border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+
+        .chart { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .chart-title { font-weight: 700; color: #0e7490; margin-bottom: 16px; }
+        .bar { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .bar-label { width: 80px; font-size: 12px; color: #6b7280; font-weight: 600; }
+        .bar-container { flex: 1; background: #e0f2fe; border-radius: 4px; height: 24px; overflow: hidden; }
+        .bar-fill { background: linear-gradient(90deg, #0ea5e9, #06b6d4); height: 100%; border-radius: 4px; }
+        .bar-value { font-size: 12px; font-weight: 700; color: #0e7490; min-width: 35px; text-align: right; }
+
+        .search-box { background: white; padding: 12px 16px; border-radius: 8px; border: 2px solid #cffafe; width: 300px; font-family: 'Inter', sans-serif; }
+        .search-box::placeholder { color: #9ca3af; }
+        .search-box:focus { outline: none; border-color: #0ea5e9; }
+
+        .header-title { font-size: 28px; font-weight: 800; color: #0e7490; }
+        .header-subtitle { font-size: 13px; color: #6b7280; margin-top: 4px; }
+
+        .alert { padding: 14px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; font-weight: 500; }
+        .alert-success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .alert-warning { background: #fef08a; color: #92400e; border: 1px solid #fde047; }
+        .alert-danger { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">💧</div>
+            <div class="sidebar-title">LaundryHub</div>
+            <div class="sidebar-subtitle">Panel Administrativo</div>
+        </div>
+        <div class="sidebar-nav">
+            <div class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">📊</span> Dashboard</div>
+            <div class="nav-item" onclick="showPage('orders')"><span class="nav-icon">📦</span> Órdenes</div>
+            <div class="nav-item" onclick="showPage('customers')"><span class="nav-icon">👥</span> Clientes</div>
+            <div class="nav-item" onclick="showPage('drivers')"><span class="nav-icon">🚗</span> Conductores</div>
+            <div class="nav-item" onclick="showPage('analytics')"><span class="nav-icon">📈</span> Analítica</div>
+            <div class="nav-item" onclick="showPage('finance')"><span class="nav-icon">💰</span> Finanzas</div>
+            <div class="nav-item" onclick="showPage('settings')"><span class="nav-icon">⚙️</span> Configuración</div>
+            <div class="nav-item" onclick="logout()" style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;"><span class="nav-icon">🚪</span> Cerrar Sesión</div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div>
+                <div class="header-title" id="pageTitle">Dashboard</div>
+                <div class="header-subtitle" id="pageSubtitle">Resumen general del negocio</div>
+            </div>
+            <div class="top-bar-right">
+                <input type="text" class="search-box" placeholder="🔍 Buscar órdenes, clientes...">
+                <div class="user-profile">
+                    <div>
+                        <div style="font-weight: 700; color: #0e7490; font-size: 13px;">Admin</div>
+                        <div style="font-size: 11px; color: #6b7280;">Gerente</div>
+                    </div>
+                    <div class="user-avatar">A</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD PAGE -->
+        <div id="dashboard" class="page active">
+            <div class="grid-4">
+                <div class="stat-card gradient">
+                    <div class="stat-label">Órdenes Hoy</div>
+                    <div class="stat-value">28</div>
+                    <div class="stat-change">↑ 12% vs ayer</div>
+                </div>
+                <div class="stat-card gradient" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                    <div class="stat-label">Ingresos Hoy</div>
+                    <div class="stat-value">$487.50</div>
+                    <div class="stat-change">↑ 8% vs ayer</div>
+                </div>
+                <div class="stat-card gradient" style="background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);">
+                    <div class="stat-label">Clientes Activos</div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-change">↑ 5 nuevos</div>
+                </div>
+                <div class="stat-card gradient" style="background: linear-gradient(135deg, #0e7490 0%, #164e63 100%);">
+                    <div class="stat-label">Rating Promedio</div>
+                    <div class="stat-value">4.89 ⭐</div>
+                    <div class="stat-change">En 156 reseñas</div>
+                </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 24px;">
+                <!-- ÓRDENES RECIENTES -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Orden</th>
+                                <th>Cliente</th>
+                                <th>Servicio</th>
+                                <th>Estado</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>#13045</strong></td>
+                                <td>Carolina García</td>
+                                <td>Lavado Completo</td>
+                                <td><span class="badge badge-success">Entregado</span></td>
+                                <td>$12.99</td>
+                            </tr>
+                            <tr>
+                                <td><strong>#13044</strong></td>
+                                <td>María López</td>
+                                <td>Premium Lujo</td>
+                                <td><span class="badge badge-success">Entregado</span></td>
+                                <td>$19.99</td>
+                            </tr>
+                            <tr>
+                                <td><strong>#13043</strong></td>
+                                <td>Juan Pérez</td>
+                                <td>Lavado Exprés</td>
+                                <td><span class="badge badge-processing">En Proceso</span></td>
+                                <td>$8.99</td>
+                            </tr>
+                            <tr>
+                                <td><strong>#13042</strong></td>
+                                <td>Ana Martínez</td>
+                                <td>Delicado</td>
+                                <td><span class="badge badge-pending">Pendiente</span></td>
+                                <td>$15.99</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- INGRESOS POR SERVICIO -->
+                <div class="chart">
+                    <div class="chart-title">Ingresos por Servicio (Esta Semana)</div>
+                    <div class="bar">
+                        <div class="bar-label">Lavado Completo</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 48%;"></div></div>
+                        <div class="bar-value">$487.50</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Premium Lujo</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 32%;"></div></div>
+                        <div class="bar-value">$325.20</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Lavado Exprés</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 20%;"></div></div>
+                        <div class="bar-value">$203.80</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 24px;">
+                <!-- CONDUCTORES -->
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Conductor</th>
+                                <th>Estado</th>
+                                <th>Entregas</th>
+                                <th>Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Juan García</strong></td>
+                                <td><span class="badge badge-success">En Ruta</span></td>
+                                <td>8</td>
+                                <td>⭐⭐⭐⭐⭐ 4.9</td>
+                            </tr>
+                            <tr>
+                                <td><strong>María Rodríguez</strong></td>
+                                <td><span class="badge badge-success">En Ruta</span></td>
+                                <td>6</td>
+                                <td>⭐⭐⭐⭐ 4.7</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carlos Mendoza</strong></td>
+                                <td><span class="badge badge-pending">Disponible</span></td>
+                                <td>5</td>
+                                <td>⭐⭐⭐⭐⭐ 4.8</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- RESUMEN -->
+                <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                    <div style="font-weight: 700; color: #0e7490; margin-bottom: 16px; font-size: 14px;">Resumen de la Semana</div>
+                    <div style="margin-bottom: 16px; padding: 12px; background: #e0f2fe; border-radius: 8px; color: #0c4a6e; font-size: 12px; font-weight: 500;">
+                        <div style="margin-bottom: 8px;"><strong>Total de Órdenes:</strong> 156</div>
+                        <div style="margin-bottom: 8px;"><strong>Ingresos Totales:</strong> $2,104.30</div>
+                        <div style="margin-bottom: 8px;"><strong>Promedio por Orden:</strong> $13.49</div>
+                        <div><strong>Tasa de Completación:</strong> 98.7%</div>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 12px;">Ver Reporte Completo →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ORDERS PAGE -->
+        <div id="orders" class="page">
+            <div style="margin-bottom: 20px; display: flex; gap: 12px;">
+                <button class="btn btn-primary">📥 Nueva Orden</button>
+                <button class="btn btn-secondary">⬇️ Exportar</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Orden ID</th>
+                            <th>Cliente</th>
+                            <th>Servicio</th>
+                            <th>Dirección</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>#13045</strong></td>
+                            <td>Carolina García</td>
+                            <td>Lavado Completo</td>
+                            <td>Calle Principal 123</td>
+                            <td>8 Mayo</td>
+                            <td><span class="badge badge-success">Entregado</span></td>
+                            <td>$12.99</td>
+                            <td><button class="btn btn-secondary" style="padding: 6px 10px; font-size: 11px;">Ver</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#13044</strong></td>
+                            <td>María López</td>
+                            <td>Premium Lujo</td>
+                            <td>Av Central 456</td>
+                            <td>8 Mayo</td>
+                            <td><span class="badge badge-success">Entregado</span></td>
+                            <td>$19.99</td>
+                            <td><button class="btn btn-secondary" style="padding: 6px 10px; font-size: 11px;">Ver</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#13043</strong></td>
+                            <td>Juan Pérez</td>
+                            <td>Lavado Exprés</td>
+                            <td>Calle 5 #123</td>
+                            <td>8 Mayo</td>
+                            <td><span class="badge badge-processing">En Proceso</span></td>
+                            <td>$8.99</td>
+                            <td><button class="btn btn-secondary" style="padding: 6px 10px; font-size: 11px;">Ver</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#13042</strong></td>
+                            <td>Ana Martínez</td>
+                            <td>Delicado</td>
+                            <td>Paseo 789</td>
+                            <td>8 Mayo</td>
+                            <td><span class="badge badge-pending">Pendiente</span></td>
+                            <td>$15.99</td>
+                            <td><button class="btn btn-secondary" style="padding: 6px 10px; font-size: 11px;">Ver</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>#13041</strong></td>
+                            <td>Roberto Silva</td>
+                            <td>Deportivo</td>
+                            <td>Zona Norte 321</td>
+                            <td>8 Mayo</td>
+                            <td><span class="badge badge-danger">Cancelado</span></td>
+                            <td>$10.99</td>
+                            <td><button class="btn btn-secondary" style="padding: 6px 10px; font-size: 11px;">Ver</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CUSTOMERS PAGE -->
+        <div id="customers" class="page">
+            <div style="margin-bottom: 20px; display: flex; gap: 12px;">
+                <button class="btn btn-primary">➕ Nuevo Cliente</button>
+                <button class="btn btn-secondary">⬇️ Exportar</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Órdenes</th>
+                            <th>Gasto Total</th>
+                            <th>Última Orden</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Carolina García</strong></td>
+                            <td>carolina@example.com</td>
+                            <td>+34 612 345 678</td>
+                            <td>12</td>
+                            <td>$178.50</td>
+                            <td>8 Mayo</td>
+                            <td><span class="badge badge-success">Activo</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>María López</strong></td>
+                            <td>maria@example.com</td>
+                            <td>+34 623 456 789</td>
+                            <td>8</td>
+                            <td>$152.30</td>
+                            <td>7 Mayo</td>
+                            <td><span class="badge badge-success">Activo</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Juan Pérez</strong></td>
+                            <td>juan@example.com</td>
+                            <td>+34 634 567 890</td>
+                            <td>5</td>
+                            <td>$89.20</td>
+                            <td>6 Mayo</td>
+                            <td><span class="badge badge-success">Activo</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ana Martínez</strong></td>
+                            <td>ana@example.com</td>
+                            <td>+34 645 678 901</td>
+                            <td>3</td>
+                            <td>$45.50</td>
+                            <td>5 Mayo</td>
+                            <td><span class="badge badge-processing">Inactivo</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- DRIVERS PAGE -->
+        <div id="drivers" class="page">
+            <div style="margin-bottom: 20px; display: flex; gap: 12px;">
+                <button class="btn btn-primary">➕ Nuevo Conductor</button>
+                <button class="btn btn-secondary">⬇️ Exportar</button>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Conductor</th>
+                            <th>Teléfono</th>
+                            <th>Vehículo</th>
+                            <th>Estado</th>
+                            <th>Entregas Hoy</th>
+                            <th>Rating</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Juan García</strong></td>
+                            <td>+34 612 111 111</td>
+                            <td>Toyota Corolla</td>
+                            <td><span class="badge badge-success">En Ruta</span></td>
+                            <td>8</td>
+                            <td>⭐⭐⭐⭐⭐ 4.9</td>
+                            <td><button class="btn btn-secondary" style="padding: 6px 10px; font-size: 11px;">Editar</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>María Rodríguez</strong></td>
+                            <td>+34 623 222 222</td>
+                            <td>Honda Civic</td>
+                            <td><span class="badge badge-success">En Ruta</span></td>
+                            <td>6</td>
+                            <td>⭐⭐⭐⭐ 4.7</td>
+                            <td><button class="btn btn-secondary" style="padding: 6px 10px; font-size: 11px;">Editar</button></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Carlos Mendoza</strong></td>
+                            <td>+34 634 333 333</td>
+                            <td>Nissan Sentra</td>
+                            <td><span class="badge badge-pending">Disponible</span></td>
+                            <td>5</td>
+                            <td>⭐⭐⭐⭐⭐ 4.8</td>
+                            <td><button class="btn btn-secondary" style="padding: 6px 10px; font-size: 11px;">Editar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ANALYTICS PAGE -->
+        <div id="analytics" class="page">
+            <div class="grid-2">
+                <div class="chart">
+                    <div class="chart-title">Órdenes por Día (Última Semana)</div>
+                    <div class="bar">
+                        <div class="bar-label">Lunes</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 65%;"></div></div>
+                        <div class="bar-value">18</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Martes</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 72%;"></div></div>
+                        <div class="bar-value">20</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Miércoles</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 58%;"></div></div>
+                        <div class="bar-value">16</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Jueves</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 82%;"></div></div>
+                        <div class="bar-value">23</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Viernes</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 100%;"></div></div>
+                        <div class="bar-value">28</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Sábado</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 88%;"></div></div>
+                        <div class="bar-value">25</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Domingo</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 45%;"></div></div>
+                        <div class="bar-value">12</div>
+                    </div>
+                </div>
+
+                <div class="chart">
+                    <div class="chart-title">Distribución de Servicios (Este Mes)</div>
+                    <div class="bar">
+                        <div class="bar-label">Lavado Completo</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 48%;"></div></div>
+                        <div class="bar-value">48%</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Premium Lujo</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 22%;"></div></div>
+                        <div class="bar-value">22%</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Lavado Exprés</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 15%;"></div></div>
+                        <div class="bar-value">15%</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Delicado</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 10%;"></div></div>
+                        <div class="bar-value">10%</div>
+                    </div>
+                    <div class="bar">
+                        <div class="bar-label">Otros</div>
+                        <div class="bar-container"><div class="bar-fill" style="width: 5%;"></div></div>
+                        <div class="bar-value">5%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FINANCE PAGE -->
+        <div id="finance" class="page">
+            <div class="grid-3" style="margin-bottom: 24px;">
+                <div class="stat-card">
+                    <div class="stat-label">Ingresos Este Mes</div>
+                    <div class="stat-value">$4,847.50</div>
+                    <div class="stat-change">↑ 15% vs mes anterior</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Gastos Este Mes</div>
+                    <div class="stat-value">$1,245.30</div>
+                    <div class="stat-change">Combustible y mantenimiento</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Ganancia Neta</div>
+                    <div class="stat-value">$3,602.20</div>
+                    <div class="stat-change">↑ 18% vs mes anterior</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Concepto</th>
+                            <th>Tipo</th>
+                            <th>Monto</th>
+                            <th>Saldo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>8 Mayo</td>
+                            <td>Órdenes completadas</td>
+                            <td><span style="color: #10b981; font-weight: 700;">INGRESO</span></td>
+                            <td>+$487.50</td>
+                            <td>$12,847.50</td>
+                        </tr>
+                        <tr>
+                            <td>8 Mayo</td>
+                            <td>Combustible conductores</td>
+                            <td><span style="color: #ef4444; font-weight: 700;">GASTO</span></td>
+                            <td>-$85.00</td>
+                            <td>$12,762.50</td>
+                        </tr>
+                        <tr>
+                            <td>7 Mayo</td>
+                            <td>Órdenes completadas</td>
+                            <td><span style="color: #10b981; font-weight: 700;">INGRESO</span></td>
+                            <td>+$523.20</td>
+                            <td>$12,847.50</td>
+                        </tr>
+                        <tr>
+                            <td>7 Mayo</td>
+                            <td>Mantenimiento vehículos</td>
+                            <td><span style="color: #ef4444; font-weight: 700;">GASTO</span></td>
+                            <td>-$120.00</td>
+                            <td>$12,324.30</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SETTINGS PAGE -->
+        <div id="settings" class="page">
+            <div class="stat-card" style="max-width: 600px;">
+                <div style="font-weight: 700; color: #0e7490; margin-bottom: 24px; font-size: 16px;">Configuración de la Tienda</div>
+
+                <div class="form-group">
+                    <label class="form-label">Nombre del Negocio</label>
+                    <input type="text" class="form-input" value="LaundryHub">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email de Contacto</label>
+                    <input type="email" class="form-input" value="admin@laundry hub.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Teléfono</label>
+                    <input type="tel" class="form-input" value="+34 612 345 678">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Dirección</label>
+                    <input type="text" class="form-input" value="Calle Principal 123, Oficina 4">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Costo de Envío Base</label>
+                    <input type="text" class="form-input" value="$1.99">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Porcentaje de Impuesto</label>
+                    <input type="text" class="form-input" value="9%">
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-top: 16px;">💾 Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+
+            // Update title
+            const titles = {
+                'dashboard': ['Dashboard', 'Resumen general del negocio'],
+                'orders': ['Órdenes', 'Gestiona todas tus órdenes'],
+                'customers': ['Clientes', 'Administra tus clientes'],
+                'drivers': ['Conductores', 'Gestiona tu equipo de conductores'],
+                'analytics': ['Analítica', 'Análisis de datos y reportes'],
+                'finance': ['Finanzas', 'Control de ingresos y gastos'],
+                'settings': ['Configuración', 'Ajustes de la tienda']
+            };
+
+            document.getElementById('pageTitle').textContent = titles[pageId][0];
+            document.getElementById('pageSubtitle').textContent = titles[pageId][1];
+        }
+
+        function logout() {
+            if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+                alert('Sesión cerrada. Redirigiendo a login...');
+                window.location.href = '/';
+            }
+        }
+    </script>
+</body>
+</html>
