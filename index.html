@@ -3,408 +3,599 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LaundryHub</title>
+    <title>LaundryHub - La Mejor App de Lavandería</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Inter', sans-serif; }
-        body { margin: 0; padding: 0; overflow: hidden; background: #f3f4f6; }
-        html, body, #app { height: 100%; }
-        .app-container { height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .phone { width: 100%; max-width: 448px; height: 100vh; max-height: 900px; background: white; border-radius: 48px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); display: flex; flex-direction: column; overflow: hidden; }
-        .content { flex: 1; overflow-y: auto; overflow-x: hidden; scroll-behavior: smooth; padding-bottom: 80px; }
-        .tabbar { border-top: 2px solid #e5e7eb; padding: 12px; background: white; position: absolute; bottom: 0; width: 100%; max-width: 448px; flex-shrink: 0; }
-        .tab-btn { display: flex; flex-direction: column; align-items: center; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; cursor: pointer; }
-        .tab-btn.active { background: #f3e8ff; color: #a855f7; }
-        .tab-btn:not(.active) { color: #9ca3af; }
-        .tab-btn span:first-child { font-size: 20px; margin-bottom: 4px; }
-        .tab-btn span:last-child { font-size: 11px; font-weight: bold; }
+        body { margin: 0; padding: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .login-container { display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 20px; }
+        .login-box { background: white; border-radius: 24px; padding: 48px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); max-width: 450px; width: 100%; }
+        .logo { font-size: 48px; text-align: center; margin-bottom: 24px; }
+        .title { font-size: 28px; font-weight: 800; color: #1f2937; text-align: center; margin-bottom: 8px; }
+        .subtitle { color: #6b7280; text-align: center; margin-bottom: 32px; }
+        .role-btn { width: 100%; padding: 16px; border-radius: 16px; font-weight: 600; font-size: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s; border: none; }
+        .role-btn.client { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .role-btn.client:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4); }
+        .role-btn.laundry { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+        .role-btn.laundry:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(245, 87, 108, 0.4); }
+
+        .app-view { display: none; }
+        .app-view.active { display: flex; }
+
+        .client-app, .laundry-app { width: 100%; min-height: 100vh; flex-direction: column; }
+
+        .mobile-frame { background: white; border-radius: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); overflow: hidden; max-width: 420px; height: 100vh; max-height: 860px; display: flex; flex-direction: column; position: relative; }
+
+        .app-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; text-align: center; flex-shrink: 0; }
+        .app-header h1 { margin: 0; font-size: 24px; font-weight: 700; }
+        .app-header.back-btn { position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 18px; z-index: 10; }
+
+        .app-content { flex: 1; overflow-y: auto; padding: 20px; }
+        .app-tabbar { display: flex; border-top: 1px solid #e5e7eb; background: white; flex-shrink: 0; }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; transition: all 0.3s; border: none; background: none; font-size: 24px; }
+        .tab.active { background: #f3f4f6; color: #667eea; }
+
+        .service-card { background: white; border: 2px solid #e5e7eb; border-radius: 16px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.3s; display: flex; gap: 16px; }
+        .service-card:hover { border-color: #667eea; box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15); transform: translateY(-4px); }
+        .service-icon { font-size: 40px; }
+        .service-info { flex: 1; }
+        .service-name { font-weight: 700; color: #1f2937; margin-bottom: 4px; }
+        .service-desc { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+        .service-price { font-weight: 700; color: #667eea; font-size: 16px; }
+
+        .order-card { background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+        .order-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px; }
+        .order-id { font-size: 12px; color: #6b7280; }
+        .order-name { font-weight: 700; color: #1f2937; }
+        .order-status { background: #d1fae5; color: #047857; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .order-meta { font-size: 12px; color: #6b7280; }
+
+        .dashboard-stat { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border-radius: 12px; margin-bottom: 12px; }
+        .stat-label { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+        .stat-value { font-size: 28px; font-weight: 800; }
+
+        .input-field { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; margin-bottom: 12px; font-family: 'Inter', sans-serif; font-size: 14px; }
+        .input-field:focus { outline: none; border-color: #667eea; }
+
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 24px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; width: 100%; margin-top: 12px; transition: all 0.3s; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4); }
+
+        .back-link { display: inline-block; margin-bottom: 16px; color: #667eea; text-decoration: none; font-weight: 600; cursor: pointer; }
+        .back-link:hover { text-decoration: underline; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        .badge { display: inline-block; background: #fef08a; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 8px; margin-bottom: 8px; }
     </style>
 </head>
 <body>
-    <div id="app"></div>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- LOGIN / ROLE SELECTION -->
+    <div id="loginView" class="login-container">
+        <div class="login-box">
+            <div class="logo">🧺</div>
+            <h1 class="title">LaundryHub</h1>
+            <p class="subtitle">La app de lavandería #1 en el país</p>
 
-    <script type="text/babel">
-        const { useState } = React;
+            <button class="role-btn client" onclick="selectRole('client')">
+                👤 Soy Cliente
+            </button>
 
-        const SERVICES = [
-            { id: 1, icon: '👕', name: 'Lavado Completo', desc: 'Lavado, secado y planchado', price: 12.99 },
-            { id: 2, icon: '⚡', name: 'Lavado Exprés', desc: 'Lavado y secado', price: 8.99 },
-            { id: 3, icon: '🔥', name: 'Planchado', desc: 'Profesional', price: 4.99 },
-            { id: 4, icon: '✨', name: 'Delicado', desc: 'Prendas sensibles', price: 15.99 },
-            { id: 5, icon: '💪', name: 'Deportivo', desc: 'Ropa deportiva', price: 10.99 },
-            { id: 6, icon: '👑', name: 'Premium', desc: 'Todo + aroma', price: 19.99 },
-        ];
+            <button class="role-btn laundry" onclick="selectRole('laundry')">
+                🏢 Soy Dueño de Lavandería
+            </button>
+        </div>
+    </div>
 
-        const ORDERS = [
-            { id: '#12345', name: 'Lavado Completo', date: '5 de Mayo', items: 5, price: '$12.99', status: 'Entregado' },
-            { id: '#12344', name: 'Lavado Exprés', date: '3 de Mayo', items: 3, price: '$8.99', status: 'Entregado' },
-            { id: '#12343', name: 'Premium', date: '1 de Mayo', items: 8, price: '$19.99', status: 'Entregado' },
-        ];
+    <!-- CLIENT APP -->
+    <div id="clientApp" class="app-view client-app">
+        <div class="mobile-frame">
+            <button class="app-header back-btn" onclick="goBack()">←</button>
 
-        function HomeScreen({ onOrderClick }) {
-            return (
-                <div className="p-6 space-y-6 pb-24">
-                    <div>
-                        <p className="text-xs text-purple-600 font-bold uppercase">Bienvenido</p>
-                        <h1 className="text-2xl font-bold text-gray-900">Carolina García</h1>
+            <div id="clientContent" class="app-content">
+                <!-- HOME SCREEN -->
+                <div id="clientHome" style="display: block;">
+                    <div style="margin-bottom: 24px;">
+                        <h2 style="font-size: 12px; color: #667eea; font-weight: 700; margin: 0 0 8px 0;">BIENVENIDO</h2>
+                        <h1 style="font-size: 32px; font-weight: 800; color: #1f2937; margin: 0;">Hola, Carolina</h1>
                     </div>
 
-                    <button
-                        onClick={onOrderClick}
-                        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-4 px-6 rounded-2xl hover:shadow-lg hover:scale-105 transition"
-                    >
-                        ✨ Solicitar servicio
+                    <button onclick="showClientScreen('service')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; width: 100%; padding: 16px; border-radius: 12px; border: none; font-weight: 700; font-size: 16px; cursor: pointer; margin-bottom: 24px;">
+                        ✨ Solicitar Servicio Ahora
                     </button>
 
-                    <div className="bg-white border-2 border-gray-200 rounded-2xl p-4">
-                        <div className="flex justify-between items-start mb-3">
+                    <div style="background: white; border: 2px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
                             <div>
-                                <p className="text-sm text-gray-600">#12345</p>
-                                <p className="font-bold text-gray-900">Lavado Completo</p>
+                                <p style="font-size: 12px; color: #6b7280; margin: 0 0 4px 0;">#12345</p>
+                                <p style="font-weight: 700; color: #1f2937; margin: 0;">Lavado Completo</p>
                             </div>
-                            <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">✓ Entregado</span>
+                            <span style="background: #d1fae5; color: #047857; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">✓ Entregado</span>
                         </div>
-                        <p className="text-sm text-gray-600">5 de Mayo • 5 prendas</p>
-                        <p className="font-bold text-purple-600 mt-2">$12.99</p>
+                        <p style="font-size: 12px; color: #6b7280; margin: 0 0 8px 0;">8 de Mayo • 5 prendas</p>
+                        <p style="font-weight: 700; color: #667eea; font-size: 16px; margin: 0;">$12.99</p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                        <button
-                            onClick={onOrderClick}
-                            className="bg-white border-2 border-gray-200 rounded-2xl p-4 text-center hover:shadow-lg hover:scale-105 transition"
-                        >
-                            <span className="text-3xl">🏃</span>
-                            <p className="font-bold text-gray-900 text-sm mt-2">Rápido</p>
+                    <h3 style="font-weight: 700; color: #1f2937; margin-bottom: 12px;">Accesos Rápidos</h3>
+                    <div class="grid-2">
+                        <button onclick="showClientScreen('service')" style="background: white; border: 2px solid #e5e7eb; padding: 16px; border-radius: 12px; cursor: pointer; transition: all 0.3s;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">⚡</div>
+                            <div style="font-weight: 600; font-size: 12px;">Rápido</div>
                         </button>
-                        <button className="bg-white border-2 border-gray-200 rounded-2xl p-4 text-center hover:shadow-lg hover:scale-105 transition">
-                            <span className="text-3xl">🎁</span>
-                            <p className="font-bold text-gray-900 text-sm mt-2">Ofertas</p>
+                        <button style="background: white; border: 2px solid #e5e7eb; padding: 16px; border-radius: 12px; cursor: pointer; transition: all 0.3s;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">🎁</div>
+                            <div style="font-weight: 600; font-size: 12px;">Ofertas</div>
                         </button>
                     </div>
                 </div>
-            );
-        }
 
-        function SelectServiceScreen({ onBack, onSelect }) {
-            return (
-                <div className="p-6 space-y-4 pb-24">
-                    <div className="flex items-center gap-3 mb-4">
-                        <button onClick={onBack} className="text-2xl hover:scale-125 transition">←</button>
-                        <h2 className="text-xl font-bold">Servicios</h2>
+                <!-- SERVICES SCREEN -->
+                <div id="clientService" style="display: none;">
+                    <a class="back-link" onclick="showClientScreen('home')">← Volver</a>
+                    <h2 style="font-size: 24px; font-weight: 800; color: #1f2937; margin-bottom: 16px;">Nuestros Servicios</h2>
+
+                    <div class="service-card" onclick="showClientScreen('checkout')">
+                        <div class="service-icon">👕</div>
+                        <div class="service-info">
+                            <div class="service-name">Lavado Completo</div>
+                            <div class="service-desc">Lavado + Secado + Planchado</div>
+                            <div class="service-price">$12.99</div>
+                        </div>
                     </div>
 
-                    {SERVICES.map(service => (
-                        <button
-                            key={service.id}
-                            onClick={() => onSelect(service)}
-                            className="w-full bg-white border-2 border-gray-200 rounded-2xl p-4 flex gap-4 hover:shadow-lg hover:border-purple-300 hover:scale-102 transition text-left"
-                        >
-                            <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center text-2xl flex-shrink-0">{service.icon}</div>
-                            <div className="flex-1 min-w-0">
-                                <p className="font-bold text-gray-900">{service.name}</p>
-                                <p className="text-xs text-gray-600">{service.desc}</p>
-                                <p className="font-bold text-purple-600 text-lg mt-1">${service.price.toFixed(2)}</p>
-                            </div>
-                        </button>
-                    ))}
+                    <div class="service-card" onclick="showClientScreen('checkout')">
+                        <div class="service-icon">⚡</div>
+                        <div class="service-info">
+                            <div class="service-name">Lavado Exprés</div>
+                            <div class="service-desc">Lavado + Secado (24h)</div>
+                            <div class="service-price">$8.99</div>
+                        </div>
+                    </div>
+
+                    <div class="service-card" onclick="showClientScreen('checkout')">
+                        <div class="service-icon">🔥</div>
+                        <div class="service-info">
+                            <div class="service-name">Planchado Profesional</div>
+                            <div class="service-desc">Impecable y listo</div>
+                            <div class="service-price">$4.99</div>
+                        </div>
+                    </div>
+
+                    <div class="service-card" onclick="showClientScreen('checkout')">
+                        <div class="service-icon">✨</div>
+                        <div class="service-info">
+                            <div class="service-name">Lavado Delicado</div>
+                            <div class="service-desc">Prendas sensibles</div>
+                            <div class="service-price">$15.99</div>
+                        </div>
+                    </div>
+
+                    <div class="service-card" onclick="showClientScreen('checkout')">
+                        <div class="service-icon">💪</div>
+                        <div class="service-info">
+                            <div class="service-name">Ropa Deportiva</div>
+                            <div class="service-desc">Mantiene elasticidad</div>
+                            <div class="service-price">$10.99</div>
+                        </div>
+                    </div>
+
+                    <div class="service-card" onclick="showClientScreen('checkout')">
+                        <div class="service-icon">👑</div>
+                        <div class="service-info">
+                            <div class="service-name">Premium + Aroma</div>
+                            <div class="service-desc">Lujo total para tu ropa</div>
+                            <div class="service-price">$19.99</div>
+                        </div>
+                    </div>
                 </div>
-            );
-        }
 
-        function CheckoutScreen({ service, onBack, onPay }) {
-            const [address, setAddress] = useState('Calle Principal 123');
-            const [date, setDate] = useState('Hoy');
-            const [time, setTime] = useState('10:00 AM');
+                <!-- CHECKOUT SCREEN -->
+                <div id="clientCheckout" style="display: none;">
+                    <a class="back-link" onclick="showClientScreen('service')">← Volver</a>
+                    <h2 style="font-size: 24px; font-weight: 800; color: #1f2937; margin-bottom: 16px;">Detalles del Pedido</h2>
 
-            return (
-                <div className="p-6 space-y-4 pb-24">
-                    <div className="flex items-center gap-3 mb-4">
-                        <button onClick={onBack} className="text-2xl hover:scale-125 transition">←</button>
-                        <h2 className="text-xl font-bold">Detalles</h2>
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="font-size: 32px; margin-bottom: 8px;">👕</div>
+                        <div style="font-weight: 700; margin-bottom: 4px;">Lavado Completo</div>
+                        <div style="font-size: 12px; opacity: 0.9;">Lavado + Secado + Planchado</div>
+                        <div style="font-size: 20px; font-weight: 800; margin-top: 8px;">$12.99</div>
                     </div>
 
-                    <div className="bg-gradient-to-br from-purple-100 to-blue-100 rounded-2xl p-4 flex gap-3">
-                        <div className="text-4xl flex-shrink-0">{service.icon}</div>
-                        <div className="flex-1">
-                            <p className="font-bold text-gray-900">{service.name}</p>
-                            <p className="text-sm text-gray-600">{service.desc}</p>
-                            <p className="font-bold text-purple-600 text-lg mt-1">${service.price.toFixed(2)}</p>
-                        </div>
-                    </div>
+                    <label style="font-weight: 600; color: #1f2937; display: block; margin-bottom: 8px;">📍 Tu Dirección</label>
+                    <input type="text" class="input-field" value="Calle Principal 123, Apto 4B" />
 
-                    <div className="space-y-3">
-                        <div>
-                            <label className="text-sm font-bold text-gray-700 block mb-2">📍 Dirección</label>
-                            <input
-                                type="text"
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                                className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:border-purple-600"
-                            />
-                        </div>
+                    <label style="font-weight: 600; color: #1f2937; display: block; margin-bottom: 8px;">📅 Fecha de Recogida</label>
+                    <select class="input-field">
+                        <option>Hoy (8 de Mayo)</option>
+                        <option>Mañana (9 de Mayo)</option>
+                        <option>Pasado mañana (10 de Mayo)</option>
+                    </select>
 
-                        <div>
-                            <label className="text-sm font-bold text-gray-700 block mb-2">📅 Fecha</label>
-                            <select
-                                value={date}
-                                onChange={(e) => setDate(e.target.value)}
-                                className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:border-purple-600"
-                            >
-                                <option>Hoy</option>
-                                <option>Mañana</option>
-                                <option>Pasado mañana</option>
-                            </select>
-                        </div>
+                    <label style="font-weight: 600; color: #1f2937; display: block; margin-bottom: 8px;">🕐 Hora</label>
+                    <select class="input-field">
+                        <option>08:00 AM</option>
+                        <option>09:00 AM</option>
+                        <option>10:00 AM</option>
+                        <option>02:00 PM</option>
+                        <option>04:00 PM</option>
+                    </select>
 
-                        <div>
-                            <label className="text-sm font-bold text-gray-700 block mb-2">🕐 Hora</label>
-                            <select
-                                value={time}
-                                onChange={(e) => setTime(e.target.value)}
-                                className="w-full border-2 border-gray-200 rounded-xl px-4 py-2 focus:outline-none focus:border-purple-600"
-                            >
-                                <option>08:00 AM</option>
-                                <option>09:00 AM</option>
-                                <option>10:00 AM</option>
-                                <option>11:00 AM</option>
-                                <option>12:00 PM</option>
-                                <option>02:00 PM</option>
-                                <option>03:00 PM</option>
-                                <option>04:00 PM</option>
-                            </select>
+                    <div style="background: #f3f4f6; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="color: #6b7280;">Servicio</span>
+                            <span style="font-weight: 700;">$12.99</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                            <span style="color: #6b7280;">Envío</span>
+                            <span style="font-weight: 700;">$1.99</span>
+                        </div>
+                        <div style="border-top: 1px solid #e5e7eb; padding-top: 12px; display: flex; justify-content: space-between;">
+                            <span style="font-weight: 700;">Total</span>
+                            <span style="font-weight: 800; color: #667eea; font-size: 18px;">$14.98</span>
                         </div>
                     </div>
 
-                    <div className="bg-gray-50 rounded-2xl p-4 space-y-2 mt-6">
-                        <div className="flex justify-between">
-                            <span className="text-gray-600">Servicio</span>
-                            <span className="font-bold">${service.price.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-gray-600">Envío</span>
-                            <span className="font-bold">$2.00</span>
-                        </div>
-                        <div className="border-t border-gray-200 pt-2 flex justify-between">
-                            <span className="font-bold">Total</span>
-                            <span className="font-bold text-lg text-purple-600">${(service.price + 2.00).toFixed(2)}</span>
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={onPay}
-                        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-4 px-6 rounded-2xl hover:shadow-lg hover:scale-105 transition"
-                    >
-                        Continuar al Pago
-                    </button>
+                    <button class="btn-primary" onclick="showClientScreen('payment')">Proceder al Pago</button>
                 </div>
-            );
-        }
 
-        function PaymentScreen({ service, onBack, onSuccess }) {
-            const [loading, setLoading] = useState(false);
+                <!-- PAYMENT SCREEN -->
+                <div id="clientPayment" style="display: none;">
+                    <a class="back-link" onclick="showClientScreen('checkout')">← Volver</a>
+                    <h2 style="font-size: 24px; font-weight: 800; color: #1f2937; margin-bottom: 20px;">Pago Seguro</h2>
 
-            const handlePay = () => {
-                setLoading(true);
-                setTimeout(() => {
-                    onSuccess();
-                }, 2000);
-            };
-
-            return (
-                <div className="p-6 space-y-4 pb-24">
-                    <div className="flex items-center gap-3 mb-4">
-                        <button onClick={onBack} disabled={loading} className="text-2xl hover:scale-125 transition disabled:opacity-50">←</button>
-                        <h2 className="text-xl font-bold">Pago</h2>
-                    </div>
-
-                    <div className="bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-2xl p-6 shadow-lg">
-                        <p className="text-xs text-purple-100 mb-4">Tarjeta de Crédito</p>
-                        <div className="text-2xl font-bold tracking-wider mb-8">•••• •••• •••• 4242</div>
-                        <div className="flex justify-between items-end">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 16px; margin-bottom: 20px;">
+                        <div style="font-size: 12px; opacity: 0.8; margin-bottom: 16px;">Visa</div>
+                        <div style="font-size: 24px; letter-spacing: 4px; font-weight: 700; margin-bottom: 20px;">•••• •••• •••• 4242</div>
+                        <div style="display: flex; justify-content: space-between; align-items: end;">
                             <div>
-                                <p className="text-xs text-purple-100">Titular</p>
-                                <p className="font-bold">CAROLINA GARCIA</p>
+                                <div style="font-size: 10px; opacity: 0.8;">Titular</div>
+                                <div style="font-weight: 700;">CAROLINA GARCÍA</div>
                             </div>
-                            <div className="text-right">
-                                <p className="text-xs text-purple-100">Vence</p>
-                                <p className="font-bold">12/26</p>
+                            <div style="text-align: right;">
+                                <div style="font-size: 10px; opacity: 0.8;">Vence</div>
+                                <div style="font-weight: 700;">12/26</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: #dcfce7; border: 1px solid #86efac; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #15803d; font-size: 12px;">
+                        ✓ Pago 100% seguro y encriptado
+                    </div>
+
+                    <button class="btn-primary" onclick="completePayment()">Pagar $14.98</button>
+                </div>
+
+                <!-- TRACKING SCREEN -->
+                <div id="clientTracking" style="display: none;">
+                    <a class="back-link" onclick="showClientScreen('home')">← Volver</a>
+                    <h2 style="font-size: 24px; font-weight: 800; color: #1f2937; margin-bottom: 16px;">Rastreo de tu Pedido</h2>
+
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="font-weight: 700; margin-bottom: 8px;">✓ Tu ropa está en camino</div>
+                        <div style="font-size: 12px; opacity: 0.9; margin-bottom: 4px;">📍 A 1.2 km de tu hogar</div>
+                        <div style="font-size: 12px; opacity: 0.9;">⏰ Llegará en ~6 minutos</div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 32px; height: 32px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">✓</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; color: #1f2937;">Confirmado</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 32px; height: 32px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">✓</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; color: #1f2937;">En camino</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                            <div style="width: 32px; height: 32px; background: #e5e7eb; color: #9ca3af; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">3</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; color: #6b7280;">En proceso</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 12px;">
+                            <div style="width: 32px; height: 32px; background: #e5e7eb; color: #9ca3af; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">4</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; color: #6b7280;">Entregado</div>
                             </div>
                         </div>
                     </div>
 
-                    {loading ? (
-                        <div className="text-center py-12">
-                            <div className="inline-block animate-spin">
-                                <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full"></div>
+                    <div style="background: #fef3c7; border: 1px solid #fcd34d; padding: 12px; border-radius: 8px; color: #92400e; font-size: 12px;">
+                        👤 <strong>Juan García</strong> es tu conductor • ⭐⭐⭐⭐⭐ (4.9)
+                    </div>
+                </div>
+
+                <!-- HISTORY SCREEN -->
+                <div id="clientHistory" style="display: none;">
+                    <a class="back-link" onclick="showClientScreen('home')">← Volver</a>
+                    <h2 style="font-size: 24px; font-weight: 800; color: #1f2937; margin-bottom: 16px;">Tu Historial</h2>
+
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">#12345</div>
+                                <div class="order-name">Lavado Completo</div>
                             </div>
-                            <p className="mt-4 font-bold text-gray-900">Procesando pago...</p>
+                            <span class="order-status">✓ Entregado</span>
                         </div>
-                    ) : (
-                        <>
-                            <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-4">
-                                <p className="text-sm text-blue-900 font-bold">✓ Pago seguro</p>
-                                <p className="text-xs text-blue-800 mt-2">Tu información está protegida</p>
-                            </div>
-
-                            <button
-                                onClick={handlePay}
-                                className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-4 px-6 rounded-2xl hover:shadow-lg hover:scale-105 transition"
-                            >
-                                Pagar ${(service.price + 2.00).toFixed(2)}
-                            </button>
-                        </>
-                    )}
-                </div>
-            );
-        }
-
-        function TrackingScreen() {
-            const [progress, setProgress] = useState(1);
-
-            React.useEffect(() => {
-                const interval = setInterval(() => {
-                    setProgress(prev => prev < 4 ? prev + 1 : 4);
-                }, 3000);
-                return () => clearInterval(interval);
-            }, []);
-
-            const statuses = ['Confirmado', 'En camino', 'En proceso', 'Entregando'];
-
-            return (
-                <div className="p-6 space-y-4 pb-24">
-                    <h2 className="text-xl font-bold mb-4">Tu Rastreo</h2>
-
-                    <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-4">
-                        <p className="text-sm text-blue-900 font-bold">✓ Tu ropa está en camino</p>
-                        <p className="text-xs text-blue-800 mt-2">📍 A 2.3 km de tu hogar</p>
-                        <p className="text-xs text-blue-800">⏰ Llegará en ~{Math.max(1, 10 - progress * 2)} minutos</p>
+                        <div class="order-meta">8 de Mayo • 5 prendas • $12.99</div>
                     </div>
 
-                    <div className="space-y-3">
-                        {statuses.map((status, i) => (
-                            <div key={i} className="flex gap-3">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition ${i < progress ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-400'}`}>
-                                    {i < progress ? '✓' : i + 1}
-                                </div>
-                                <div className="flex-1">
-                                    <p className={`font-bold ${i < progress ? 'text-gray-900' : 'text-gray-400'}`}>{status}</p>
-                                    {i === progress - 1 && <p className="text-xs text-purple-600 font-bold mt-1">En progreso...</p>}
-                                </div>
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">#12344</div>
+                                <div class="order-name">Lavado Exprés</div>
                             </div>
-                        ))}
-                    </div>
-
-                    <div className="bg-purple-50 border-2 border-purple-200 rounded-2xl p-4 mt-6">
-                        <p className="text-sm font-bold text-gray-900">👤 Tu conductor</p>
-                        <p className="text-xs text-gray-600 mt-1">Juan García • ⭐⭐⭐⭐⭐ (4.9)</p>
-                    </div>
-                </div>
-            );
-        }
-
-        function HistoryScreen() {
-            return (
-                <div className="p-6 space-y-4 pb-24">
-                    <h2 className="text-xl font-bold mb-4">Historial</h2>
-                    {ORDERS.map((order, i) => (
-                        <div key={i} className="bg-white border-2 border-gray-200 rounded-2xl p-4 hover:shadow-lg hover:scale-102 transition cursor-pointer">
-                            <div className="flex justify-between mb-2">
-                                <div>
-                                    <p className="text-sm text-gray-600">{order.id}</p>
-                                    <p className="font-bold text-gray-900">{order.name}</p>
-                                </div>
-                                <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded-full">✓</span>
-                            </div>
-                            <p className="text-sm text-gray-600">{order.date} • {order.items} prendas • {order.price}</p>
+                            <span class="order-status">✓ Entregado</span>
                         </div>
-                    ))}
-                </div>
-            );
-        }
-
-        function ProfileScreen() {
-            return (
-                <div className="bg-gradient-to-br from-purple-600 to-blue-600 text-white p-6 min-h-screen pb-24">
-                    <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl mb-4">👤</div>
-                    <h1 className="text-2xl font-bold">Carolina García</h1>
-                    <p className="text-purple-100">carolina@example.com</p>
-
-                    <div className="bg-white/10 rounded-2xl p-4 mt-6">
-                        <p className="text-xs text-purple-100">Saldo disponible</p>
-                        <p className="text-3xl font-bold">$15.50</p>
+                        <div class="order-meta">5 de Mayo • 3 prendas • $8.99</div>
                     </div>
 
-                    <div className="mt-8 space-y-3">
-                        <button className="w-full bg-white/20 hover:bg-white/30 transition rounded-xl px-4 py-3 font-bold text-left">
-                            ⚙️ Configuración
-                        </button>
-                        <button className="w-full bg-white/20 hover:bg-white/30 transition rounded-xl px-4 py-3 font-bold text-left">
-                            📞 Soporte
-                        </button>
-                        <button className="w-full bg-white/20 hover:bg-white/30 transition rounded-xl px-4 py-3 font-bold text-left">
-                            📋 Términos y Privacidad
-                        </button>
-                    </div>
-                </div>
-            );
-        }
-
-        function App() {
-            const [screen, setScreen] = useState('home');
-            const [selectedService, setSelectedService] = useState(null);
-
-            const handleSelectService = (service) => {
-                setSelectedService(service);
-                setScreen('checkout');
-            };
-
-            const handlePaymentSuccess = () => {
-                setScreen('tracking');
-            };
-
-            return (
-                <div className="app-container">
-                    <div className="phone">
-                        <div className="content">
-                            {screen === 'home' && <HomeScreen onOrderClick={() => setScreen('selectservice')} />}
-                            {screen === 'selectservice' && <SelectServiceScreen onBack={() => setScreen('home')} onSelect={handleSelectService} />}
-                            {screen === 'checkout' && selectedService && <CheckoutScreen service={selectedService} onBack={() => setScreen('selectservice')} onPay={() => setScreen('payment')} />}
-                            {screen === 'payment' && selectedService && <PaymentScreen service={selectedService} onBack={() => setScreen('checkout')} onSuccess={handlePaymentSuccess} />}
-                            {screen === 'tracking' && <TrackingScreen />}
-                            {screen === 'history' && <HistoryScreen />}
-                            {screen === 'profile' && <ProfileScreen />}
-                        </div>
-
-                        <div className="tabbar">
-                            <div className="flex justify-around">
-                                <button onClick={() => setScreen('home')} className={`tab-btn ${screen === 'home' ? 'active' : ''}`}>
-                                    <span>🏠</span>
-                                    <span>Inicio</span>
-                                </button>
-                                <button onClick={() => setScreen('history')} className={`tab-btn ${screen === 'history' ? 'active' : ''}`}>
-                                    <span>📋</span>
-                                    <span>Historial</span>
-                                </button>
-                                <button onClick={() => setScreen('tracking')} className={`tab-btn ${screen === 'tracking' ? 'active' : ''}`}>
-                                    <span>📍</span>
-                                    <span>Rastreo</span>
-                                </button>
-                                <button onClick={() => setScreen('profile')} className={`tab-btn ${screen === 'profile' ? 'active' : ''}`}>
-                                    <span>⚙️</span>
-                                    <span>Perfil</span>
-                                </button>
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">#12343</div>
+                                <div class="order-name">Premium + Aroma</div>
                             </div>
+                            <span class="order-status">✓ Entregado</span>
+                        </div>
+                        <div class="order-meta">2 de Mayo • 8 prendas • $19.99</div>
+                    </div>
+                </div>
+
+                <!-- PROFILE SCREEN -->
+                <div id="clientProfile" style="display: none;">
+                    <a class="back-link" onclick="showClientScreen('home')">← Volver</a>
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 20px;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">👤</div>
+                        <h2 style="font-size: 24px; font-weight: 800; margin: 0 0 4px 0;">Carolina García</h2>
+                        <p style="margin: 0 0 16px 0; opacity: 0.9;">carolina@example.com</p>
+                        <div style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px;">
+                            <div style="font-size: 12px; opacity: 0.9; margin-bottom: 4px;">Saldo Disponible</div>
+                            <div style="font-size: 24px; font-weight: 800;">$15.50</div>
                         </div>
                     </div>
+
+                    <button style="width: 100%; background: white; border: 2px solid #e5e7eb; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; font-weight: 600;">⚙️ Configuración</button>
+                    <button style="width: 100%; background: white; border: 2px solid #e5e7eb; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; font-weight: 600;">💳 Métodos de Pago</button>
+                    <button style="width: 100%; background: white; border: 2px solid #e5e7eb; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 8px; font-weight: 600;">📞 Soporte</button>
                 </div>
-            );
+            </div>
+
+            <div class="app-tabbar">
+                <button class="tab" onclick="showClientScreen('home')" title="Home">🏠</button>
+                <button class="tab" onclick="showClientScreen('history')" title="History">📋</button>
+                <button class="tab" onclick="showClientScreen('tracking')" title="Tracking">📍</button>
+                <button class="tab" onclick="showClientScreen('profile')" title="Profile">⚙️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LAUNDRY ADMIN APP -->
+    <div id="laundryApp" class="app-view laundry-app">
+        <div class="mobile-frame">
+            <button class="app-header back-btn" onclick="goBack()">←</button>
+            <div class="app-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); flex-shrink: 0;">
+                <h1>LaundryHub Manager</h1>
+            </div>
+
+            <div id="laundryContent" class="app-content">
+                <!-- DASHBOARD -->
+                <div id="laundryDashboard" style="display: block;">
+                    <h2 style="font-size: 20px; font-weight: 800; color: #1f2937; margin: 0 0 16px 0;">Dashboard</h2>
+
+                    <div class="dashboard-stat">
+                        <div class="stat-label">Ordenes Hoy</div>
+                        <div class="stat-value">12</div>
+                    </div>
+
+                    <div class="dashboard-stat">
+                        <div class="stat-label">Ingresos Hoy</div>
+                        <div class="stat-value">$152.87</div>
+                    </div>
+
+                    <div class="dashboard-stat">
+                        <div class="stat-label">Rating Promedio</div>
+                        <div class="stat-value">4.9 ⭐</div>
+                    </div>
+
+                    <h3 style="font-weight: 700; color: #1f2937; margin: 24px 0 12px 0; font-size: 16px;">Órdenes Pendientes</h3>
+
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">#12356</div>
+                                <div class="order-name">Lavado Completo</div>
+                            </div>
+                            <span style="background: #fef08a; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">⏳ Pendiente</span>
+                        </div>
+                        <div class="order-meta">Carolina García • 5 prendas • $12.99</div>
+                        <button style="width: 100%; margin-top: 8px; background: #667eea; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;">Asignar a Conductor</button>
+                    </div>
+
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">#12355</div>
+                                <div class="order-name">Premium + Aroma</div>
+                            </div>
+                            <span style="background: #fce7f3; color: #be185d; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">🔄 En Proceso</span>
+                        </div>
+                        <div class="order-meta">María López • 8 prendas • $19.99</div>
+                        <button style="width: 100%; margin-top: 8px; background: #10b981; color: white; border: none; padding: 8px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;">Marcar Entregado</button>
+                    </div>
+
+                    <div class="order-card">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">#12354</div>
+                                <div class="order-name">Lavado Exprés</div>
+                            </div>
+                            <span style="background: #d1fae5; color: #047857; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">✓ En Entrega</span>
+                        </div>
+                        <div class="order-meta">Juan Pérez • 3 prendas • $8.99</div>
+                    </div>
+                </div>
+
+                <!-- ORDERS -->
+                <div id="laundryOrders" style="display: none;">
+                    <a class="back-link" onclick="showLaundryScreen('dashboard')">← Volver</a>
+                    <h2 style="font-size: 24px; font-weight: 800; color: #1f2937; margin-bottom: 16px;">Todas las Órdenes</h2>
+
+                    <div style="margin-bottom: 16px;">
+                        <span class="badge">Todas</span>
+                        <span class="badge" style="background: #fef08a;">Pendientes</span>
+                        <span class="badge" style="background: #fce7f3;">En Proceso</span>
+                    </div>
+
+                    <div class="order-card" style="border-left: 4px solid #fef08a;">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">#12356</div>
+                                <div class="order-name">Lavado Completo</div>
+                            </div>
+                            <span style="background: #fef08a; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">Pendiente</span>
+                        </div>
+                        <div class="order-meta">Carolina García • Calle Principal 123 • Hoy 10:00 AM</div>
+                    </div>
+
+                    <div class="order-card" style="border-left: 4px solid #fce7f3;">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">#12355</div>
+                                <div class="order-name">Premium + Aroma</div>
+                            </div>
+                            <span style="background: #fce7f3; color: #be185d; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">En Proceso</span>
+                        </div>
+                        <div class="order-meta">María López • Av. Central 456 • Hoy 02:00 PM</div>
+                    </div>
+                </div>
+
+                <!-- ANALYTICS -->
+                <div id="laundryAnalytics" style="display: none;">
+                    <a class="back-link" onclick="showLaundryScreen('dashboard')">← Volver</a>
+                    <h2 style="font-size: 24px; font-weight: 800; color: #1f2937; margin-bottom: 16px;">Análitica</h2>
+
+                    <div class="dashboard-stat">
+                        <div class="stat-label">Ingresos Esta Semana</div>
+                        <div class="stat-value">$987.43</div>
+                    </div>
+
+                    <div class="dashboard-stat">
+                        <div class="stat-label">Órdenes Esta Semana</div>
+                        <div class="stat-value">67</div>
+                    </div>
+
+                    <div class="dashboard-stat">
+                        <div class="stat-label">Promedio por Orden</div>
+                        <div class="stat-value">$14.73</div>
+                    </div>
+
+                    <h3 style="font-weight: 700; color: #1f2937; margin: 24px 0 12px 0;">Servicios Populares</h3>
+
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-weight: 600;">Lavado Completo</span>
+                            <span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">45%</span>
+                        </div>
+                        <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden;">
+                            <div style="background: #667eea; height: 100%; width: 45%;"></div>
+                        </div>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="font-weight: 600;">Premium + Aroma</span>
+                            <span style="background: #764ba2; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600;">30%</span>
+                        </div>
+                        <div style="background: #e5e7eb; height: 6px; border-radius: 3px; overflow: hidden;">
+                            <div style="background: #764ba2; height: 100%; width: 30%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TEAM -->
+                <div id="laundryTeam" style="display: none;">
+                    <a class="back-link" onclick="showLaundryScreen('dashboard')">← Volver</a>
+                    <h2 style="font-size: 24px; font-weight: 800; color: #1f2937; margin-bottom: 16px;">Mi Equipo</h2>
+
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <div style="font-weight: 700; color: #1f2937;">Juan García</div>
+                                <div style="font-size: 12px; color: #6b7280;">Conductor • 4.9 ⭐</div>
+                                <div class="badge" style="margin-top: 4px;">En Ruta</div>
+                            </div>
+                            <span style="font-size: 12px; color: #10b981; font-weight: 600;">5 entregas hoy</span>
+                        </div>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <div style="font-weight: 700; color: #1f2937;">María Rodríguez</div>
+                                <div style="font-size: 12px; color: #6b7280;">Operadora • 4.7 ⭐</div>
+                                <div class="badge" style="margin-top: 4px; background: #dcfce7;">Disponible</div>
+                            </div>
+                            <span style="font-size: 12px; color: #667eea; font-weight: 600;">3 entregas hoy</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="app-tabbar">
+                <button class="tab" onclick="showLaundryScreen('dashboard')" title="Dashboard">📊</button>
+                <button class="tab" onclick="showLaundryScreen('orders')" title="Orders">📦</button>
+                <button class="tab" onclick="showLaundryScreen('analytics')" title="Analytics">📈</button>
+                <button class="tab" onclick="showLaundryScreen('team')" title="Team">👥</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectRole(role) {
+            document.getElementById('loginView').style.display = 'none';
+            if (role === 'client') {
+                document.getElementById('clientApp').classList.add('active');
+            } else {
+                document.getElementById('laundryApp').classList.add('active');
+            }
         }
 
-        ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+        function goBack() {
+            document.getElementById('loginView').style.display = 'flex';
+            document.getElementById('clientApp').classList.remove('active');
+            document.getElementById('laundryApp').classList.remove('active');
+            showClientScreen('home');
+            showLaundryScreen('dashboard');
+        }
+
+        function showClientScreen(screen) {
+            document.querySelectorAll('#clientContent > div').forEach(el => el.style.display = 'none');
+            document.getElementById('client' + screen.charAt(0).toUpperCase() + screen.slice(1)).style.display = 'block';
+
+            document.querySelectorAll('.app-tabbar .tab').forEach((tab, i) => {
+                tab.classList.remove('active');
+            });
+            event?.target?.classList?.add('active');
+        }
+
+        function showLaundryScreen(screen) {
+            document.querySelectorAll('#laundryContent > div').forEach(el => el.style.display = 'none');
+            document.getElementById('laundry' + screen.charAt(0).toUpperCase() + screen.slice(1)).style.display = 'block';
+        }
+
+        function completePayment() {
+            alert('¡Pago completado exitosamente! 🎉\n\nTu pedido ha sido confirmado.\nSe iniciará el rastreo en breve.');
+            showClientScreen('tracking');
+        }
     </script>
 </body>
 </html>
