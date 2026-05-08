@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaundryHub - Lavandería Under Demand</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { @apply bg-gray-50; }
+        .mobile-frame { @apply h-screen w-full max-w-md mx-auto bg-white relative; }
+        .btn-primary { @apply w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-2xl transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg; }
+        .btn-secondary { @apply w-full bg-gray-100 hover:bg-gray-200 text-gray-900 font-semibold py-3 px-4 rounded-2xl transition-all duration-200; }
+        .btn-ghost { @apply text-purple-600 font-semibold py-2 px-4 rounded-lg hover:bg-purple-50 transition-colors; }
+        .input-field { @apply w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-100 transition-all; }
+        .card { @apply bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-lg transition-all p-4; }
+        .screen { display: none; }
+        .screen.active { display: flex; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div id="app" class="mobile-frame"></div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // PANTALLA: Onboarding
+        function Onboarding({ onNext }) {
+            return (
+                <div className="h-screen w-full bg-gradient-to-b from-white to-gray-50 flex flex-col items-center justify-center px-6 pb-20 fade-in">
+                    <div className="text-center space-y-8">
+                        <div className="flex justify-center">
+                            <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl text-4xl">
+                                ✨
+                            </div>
+                        </div>
+                        <div className="space-y-3">
+                            <h1 className="text-4xl font-bold text-gray-900 leading-tight">Lavamos tu ropa</h1>
+                            <p className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">en 3 horas</p>
+                        </div>
+                        <p className="text-lg text-gray-600 leading-relaxed max-w-sm">Sin que te muevas de tu casa. Recogemos, lavamos y entregamos con la máxima calidad.</p>
+                        <div className="space-y-4 pt-12">
+                            <button onClick={() => onNext('login')} className="btn-primary">Empezar ahora</button>
+                            <button onClick={() => onNext('login')} className="btn-secondary">Ver más</button>
+                        </div>
+                        <p className="text-xs text-gray-500 pt-8">Disponible en tu zona • Sin compromiso</p>
+                    </div>
+                </div>
+            );
+        }
+
+        // PANTALLA: Login
+        function Login({ onNext }) {
+            const [step, setStep] = useState('choose');
+            const [loginType, setLoginType] = useState(null);
+            const [phone, setPhone] = useState('');
+            const [email, setEmail] = useState('');
+            const [code, setCode] = useState('');
+
+            const handlePhoneSubmit = (e) => {
+                e.preventDefault();
+                setStep('verify');
+            };
+
+            const handleEmailSubmit = (e) => {
+                e.preventDefault();
+                setStep('verify');
+            };
+
+            const handleVerify = (e) => {
+                e.preventDefault();
+                onNext('home');
+            };
+
+            return (
+                <div className="h-screen w-full bg-white flex flex-col pb-20 fade-in overflow-y-auto">
+                    {step !== 'choose' && (
+                        <button onClick={() => setStep('choose')} className="p-4 hover:bg-gray-50 transition-colors">
+                            <span className="text-2xl">←</span>
+                        </button>
+                    )}
+
+                    <div className="flex-1 flex flex-col items-center justify-center px-6 space-y-8">
+                        {step === 'choose' && (
+                            <>
+                                <h1 className="text-3xl font-bold text-gray-900">Bienvenido</h1>
+                                <div className="w-full space-y-3 pt-4">
+                                    <button onClick={() => { setLoginType('phone'); setStep('enter'); }} className="card cursor-pointer w-full flex items-center space-x-4 py-4 px-5">
+                                        <span className="text-2xl">📱</span>
+                                        <div className="text-left">
+                                            <p className="font-semibold text-gray-900">Teléfono</p>
+                                            <p className="text-sm text-gray-500">Código de 4 dígitos</p>
+                                        </div>
+                                    </button>
+                                    <button onClick={() => { setLoginType('email'); setStep('enter'); }} className="card cursor-pointer w-full flex items-center space-x-4 py-4 px-5">
+                                        <span className="text-2xl">✉️</span>
+                                        <div className="text-left">
+                                            <p className="font-semibold text-gray-900">Correo</p>
+                                            <p className="text-sm text-gray-500">Acceso rápido</p>
+                                        </div>
+                                    </button>
+                                </div>
+                            </>
+                        )}
+
+                        {step === 'enter' && loginType === 'phone' && (
+                            <form onSubmit={handlePhoneSubmit} className="w-full space-y-6">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">Número de teléfono</label>
+                                    <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+34 600 000 000" className="input-field" />
+                                </div>
+                                <button type="submit" className="btn-primary">Continuar</button>
+                            </form>
+                        )}
+
+                        {step === 'enter' && loginType === 'email' && (
+                            <form onSubmit={handleEmailSubmit} className="w-full space-y-6">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">Correo electrónico</label>
+                                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="tu@email.com" className="input-field" />
+                                </div>
+                                <button type="submit" className="btn-primary">Continuar</button>
+                            </form>
+                        )}
+
+                        {step === 'verify' && (
+                            <form onSubmit={handleVerify} className="w-full space-y-6">
+                                <div className="text-center space-y-2">
+                                    <p className="text-gray-600">Hemos enviado un código a <span className="font-semibold text-gray-900">{loginType === 'phone' ? phone : email}</span></p>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">Código de verificación</label>
+                                    <input type="text" maxLength="4" value={code} onChange={(e) => setCode(e.target.value)} placeholder="0000" className="input-field text-center text-2xl tracking-widest font-bold" />
+                                </div>
+                                <button type="submit" className="btn-primary">Verificar</button>
+                                <button type="button" onClick={() => setStep('enter')} className="btn-ghost w-full">Cambiar contacto</button>
+                            </form>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // PANTALLA: Home
+        function Home({ onNext }) {
+            return (
+                <div className="h-screen w-full bg-gradient-to-b from-white to-gray-50 overflow-y-auto pb-24 fade-in">
+                    <div className="px-6 pt-8">
+                        <div className="mb-8">
+                            <p className="text-gray-600">Hola,</p>
+                            <h1 className="text-3xl font-bold text-gray-900">Carolina</h1>
+                        </div>
+
+                        <button onClick={() => onNext('service')} className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-bold py-6 px-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 flex items-center justify-between group">
+                            <div className="text-left">
+                                <p className="text-sm opacity-90">Solicitar</p>
+                                <p className="text-2xl">Servicio</p>
+                            </div>
+                            <span className="text-3xl">✨</span>
+                        </button>
+                    </div>
+
+                    <div className="px-6 mt-12">
+                        <h2 className="text-lg font-bold text-gray-900 mb-4">Último pedido</h2>
+                        <div className="card cursor-pointer hover:shadow-lg transition-all" onClick={() => onNext('tracking')}>
+                            <div className="flex items-start justify-between mb-4">
+                                <div>
+                                    <p className="text-sm text-gray-600">Pedido #12345</p>
+                                    <p className="text-gray-900 font-semibold mt-1">Entregado</p>
+                                </div>
+                                <span className="inline-block px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Entregado</span>
+                            </div>
+                            <div className="space-y-2 pt-4 border-t border-gray-100">
+                                <div className="flex items-center text-gray-600 text-sm">
+                                    ⏱️ 5 de Mayo • 5 prendas
+                                </div>
+                            </div>
+                            <button className="w-full mt-4 py-2 px-4 bg-purple-50 text-purple-600 font-semibold rounded-lg hover:bg-purple-100 transition-colors text-sm">Ver detalles</button>
+                        </div>
+                    </div>
+
+                    <div className="px-6 mt-12">
+                        <h2 className="text-lg font-bold text-gray-900 mb-4">Accesos rápidos</h2>
+                        <div className="grid grid-cols-2 gap-3">
+                            <button onClick={() => onNext('service')} className="card cursor-pointer text-center py-6 hover:shadow-lg transition-all">
+                                <p className="text-2xl mb-2">🏃</p>
+                                <p className="font-semibold text-gray-900 text-sm">Pedido Rápido</p>
+                            </button>
+                            <button onClick={() => onNext('history')} className="card cursor-pointer text-center py-6 hover:shadow-lg transition-all">
+                                <p className="text-2xl mb-2">📋</p>
+                                <p className="font-semibold text-gray-900 text-sm">Historial</p>
+                            </button>
+                            <button className="card cursor-pointer text-center py-6 hover:shadow-lg transition-all">
+                                <p className="text-2xl mb-2">🎁</p>
+                                <p className="font-semibold text-gray-900 text-sm">Promociones</p>
+                            </button>
+                            <button className="card cursor-pointer text-center py-6 hover:shadow-lg transition-all">
+                                <p className="text-2xl mb-2">❓</p>
+                                <p className="font-semibold text-gray-900 text-sm">Soporte</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // PANTALLA: Seleccionar Servicio
+        function SelectService({ onNext }) {
+            const [selected, setSelected] = useState(null);
+
+            const services = [
+                { id: 1, name: 'Lavado Completo', description: 'Incluye lavado, secado y planchado', price: '12,99€', icon: '👕' },
+                { id: 2, name: 'Lavado Exprés', description: 'Solo lavado y secado', price: '8,99€', icon: '⚡' },
+                { id: 3, name: 'Planchado', description: 'Planchado profesional', price: '4,99€', icon: '🔥' },
+                { id: 4, name: 'Lavado Delicado', description: 'Para prendas sensibles', price: '15,99€', icon: '✨' },
+                { id: 5, name: 'Lavado Deportivo', description: 'Especializado en ropa deportiva', price: '10,99€', icon: '💪' },
+                { id: 6, name: 'Servicio Premium', description: 'Incluye todo + aroma premium', price: '19,99€', icon: '👑' },
+            ];
+
+            return (
+                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
+                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4">
+                        <button onClick={() => onNext('home')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl">←</button>
+                        <h1 className="text-2xl font-bold text-gray-900">Selecciona servicio</h1>
+                    </div>
+
+                    <div className="px-6 py-8 space-y-4">
+                        {services.map((service) => (
+                            <button key={service.id} onClick={() => setSelected(service.id)} className={`w-full transition-all transform hover:scale-105 ${selected === service.id ? 'ring-2 ring-purple-600 shadow-lg' : 'border border-gray-200 hover:border-gray-300'} rounded-2xl p-4 bg-white text-left`}>
+                                <div className="flex items-start justify-between mb-3">
+                                    <span className="text-3xl">{service.icon}</span>
+                                    {selected === service.id && <div className="w-6 h-6 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm">✓</div>}
+                                </div>
+                                <h3 className="font-bold text-gray-900 text-lg">{service.name}</h3>
+                                <p className="text-sm text-gray-600 mt-1">{service.description}</p>
+                                <p className="text-lg font-bold text-purple-600 mt-2">{service.price}</p>
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="fixed bottom-20 left-0 right-0 max-w-md mx-auto px-6 pb-4">
+                        <button onClick={() => selected && onNext('address')} disabled={!selected} className={`btn-primary ${!selected ? 'opacity-50 cursor-not-allowed' : ''}`}>Continuar</button>
+                    </div>
+                </div>
+            );
+        }
+
+        // PANTALLA: Dirección y Horario
+        function AddressSchedule({ onNext }) {
+            const [address, setAddress] = useState('Calle Principal 123, Apt 4B, Madrid');
+            const [time, setTime] = useState('09:00');
+            const [selectedDate, setSelectedDate] = useState('today');
+
+            const dates = [
+                { id: 'today', label: 'Hoy' },
+                { id: 'tomorrow', label: 'Mañana' },
+                { id: 'next', label: 'Próximos' },
+            ];
+
+            const times = ['08:00', '09:00', '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
+
+            return (
+                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
+                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4">
+                        <button onClick={() => onNext('service')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl">←</button>
+                        <h1 className="text-2xl font-bold text-gray-900">Dirección y hora</h1>
+                    </div>
+
+                    <div className="px-6 py-8 space-y-8">
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-900 mb-3">📍 Dirección de recogida</label>
+                            <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} className="input-field" />
+                            <p className="text-xs text-gray-500 mt-2">Recogida gratuita en tu domicilio</p>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-900 mb-3">📅 Fecha de recogida</label>
+                            <div className="grid grid-cols-3 gap-2">
+                                {dates.map((date) => (
+                                    <button key={date.id} onClick={() => setSelectedDate(date.id)} className={`py-3 px-4 rounded-xl font-semibold transition-all ${selectedDate === date.id ? 'bg-purple-600 text-white shadow-lg' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}>
+                                        {date.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-900 mb-3">⏰ Hora preferida</label>
+                            <div className="grid grid-cols-3 gap-2 max-h-48 overflow-y-auto">
+                                {times.map((t) => (
+                                    <button key={t} onClick={() => setTime(t)} className={`py-3 px-4 rounded-xl font-semibold transition-all ${time === t ? 'bg-purple-600 text-white shadow-lg' : 'bg-gray-100 text-gray-900 hover:bg-gray-200'}`}>
+                                        {t}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                            <p className="text-sm text-blue-900 font-semibold">✓ Recogida confirmada</p>
+                            <p className="text-xs text-blue-800 mt-1">Llegaremos a recoger tu ropa en la franja horaria seleccionada</p>
+                        </div>
+                    </div>
+
+                    <div className="fixed bottom-20 left-0 right-0 max-w-md mx-auto px-6 pb-4">
+                        <button onClick={() => onNext('confirmation')} className="btn-primary">Continuar</button>
+                    </div>
+                </div>
+            );
+        }
+
+        // PANTALLA: Confirmación
+        function Confirmation({ onNext }) {
+            const [promoCode, setPromoCode] = useState('');
+
+            const order = {
+                service: 'Lavado Completo',
+                address: 'Calle Principal 123, Apt 4B',
+                date: 'Hoy',
+                time: '09:00',
+                basePrice: 12.99,
+                delivery: 2.00,
+                discount: 0,
+            };
+
+            const total = order.basePrice + order.delivery - order.discount;
+
+            return (
+                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
+                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4">
+                        <button onClick={() => onNext('address')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl">←</button>
+                        <h1 className="text-2xl font-bold text-gray-900">Resumen pedido</h1>
+                    </div>
+
+                    <div className="px-6 py-8 space-y-6">
+                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 space-y-4">
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <p className="text-sm text-purple-700 font-semibold">Servicio</p>
+                                    <p className="text-2xl font-bold text-purple-900 mt-1">{order.service}</p>
+                                </div>
+                                <span className="text-2xl">✓</span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <div className="flex items-center text-gray-700">
+                                <span className="mr-3">📍</span>
+                                <div>
+                                    <p className="text-sm text-gray-600">Recogida</p>
+                                    <p className="font-semibold">{order.address}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center text-gray-700">
+                                <span className="mr-3">⏰</span>
+                                <div>
+                                    <p className="text-sm text-gray-600">Fecha y hora</p>
+                                    <p className="font-semibold">{order.date} a las {order.time}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-gray-50 rounded-xl p-4 space-y-3 border border-gray-200">
+                            <div className="flex justify-between">
+                                <p className="text-gray-600">Servicio</p>
+                                <p className="font-semibold text-gray-900">${order.basePrice.toFixed(2)}</p>
+                            </div>
+                            <div className="flex justify-between">
+                                <p className="text-gray-600">Envío y recogida</p>
+                                <p className="font-semibold text-gray-900">${order.delivery.toFixed(2)}</p>
+                            </div>
+                            <div className="border-t border-gray-200 pt-3 flex justify-between">
+                                <p className="font-bold text-gray-900">Total</p>
+                                <p className="text-2xl font-bold text-purple-600">${total.toFixed(2)}</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <label className="block text-sm font-semibold text-gray-900">Código promocional (opcional)</label>
+                            <div className="flex gap-2">
+                                <input type="text" value={promoCode} onChange={(e) => setPromoCode(e.target.value)} placeholder="PROMO2024" className="input-field flex-1" />
+                                <button className="px-4 py-3 bg-gray-200 text-gray-900 font-semibold rounded-xl hover:bg-gray-300 transition-colors">Aplicar</button>
+                            </div>
+                        </div>
+
+                        <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                            <p className="text-sm text-green-900 font-semibold">✓ Cobertura garantizada</p>
+                            <p className="text-xs text-green-800 mt-1">Tu ropa llegará limpia y en perfecto estado o te devolvemos el dinero</p>
+                        </div>
+                    </div>
+
+                    <div className="fixed bottom-20 left-0 right-0 max-w-md mx-auto px-6 pb-4">
+                        <button onClick={() => onNext('payment')} className="btn-primary">Confirmar y pagar</button>
+                    </div>
+                </div>
+            );
+        }
+
+        // PANTALLA: Pago
+        function Payment({ onNext }) {
+            const [cardNumber, setCardNumber] = useState('4532 1234 5678 9010');
+            const [expiry, setExpiry] = useState('12/26');
+            const [cvc, setCvc] = useState('123');
+            const [processing, setProcessing] = useState(false);
+            const [completed, setCompleted] = useState(false);
+
+            const handlePayment = (e) => {
+                e.preventDefault();
+                setProcessing(true);
+                setTimeout(() => {
+                    setProcessing(false);
+                    setCompleted(true);
+                    setTimeout(() => {
+                        onNext('tracking');
+                    }, 2000);
+                }, 2000);
+            };
+
+            return (
+                <div className="h-screen w-full bg-white overflow-y-auto pb-20 fade-in">
+                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4">
+                        <button onClick={() => !processing && !completed && onNext('confirmation')} disabled={processing || completed} className={`p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl ${processing || completed ? 'cursor-not-allowed opacity-50' : ''}`}>←</button>
+                        <h1 className="text-2xl font-bold text-gray-900">Pago</h1>
+                    </div>
+
+                    {!completed && (
+                        <form onSubmit={handlePayment} className="px-6 py-8 space-y-8">
+                            <div className="bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl p-6 text-white relative overflow-hidden h-48 flex flex-col justify-between">
+                                <div>
+                                    <p className="text-sm opacity-75 font-semibold">Tarjeta de pago</p>
+                                    <p className="text-2xl font-bold mt-8 tracking-widest">{cardNumber}</p>
+                                </div>
+                                <div className="flex justify-between">
+                                    <div>
+                                        <p className="text-xs opacity-75">Expira</p>
+                                        <p className="font-semibold">{expiry}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-xs opacity-75">CVC</p>
+                                        <p className="font-semibold">•••</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 mb-2">Número de tarjeta</label>
+                                    <input type="text" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} placeholder="4532 1234 5678 9010" className="input-field" />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-2">Vencimiento</label>
+                                        <input type="text" value={expiry} onChange={(e) => setExpiry(e.target.value)} placeholder="MM/YY" className="input-field" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-900 mb-2">CVC</label>
+                                        <input type="text" value={cvc} onChange={(e) => setCvc(e.target.value)} placeholder="123" className="input-field" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                <p className="text-xs text-blue-900">🔒 Tu pago está protegido con encriptación SSL de nivel bancario</p>
+                            </div>
+
+                            <button type="submit" disabled={processing} className={`btn-primary ${processing ? 'opacity-70 cursor-not-allowed' : ''}`}>
+                                {processing ? '⏳ Procesando...' : 'Pagar ahora'}
+                            </button>
+                        </form>
+                    )}
+
+                    {completed && (
+                        <div className="flex flex-col items-center justify-center h-96 space-y-6 fade-in">
+                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center animate-bounce text-3xl">✓</div>
+                            <div className="text-center space-y-2">
+                                <h2 className="text-3xl font-bold text-gray-900">¡Pagado!</h2>
+                                <p className="text-gray-600">Tu pedido ha sido confirmado</p>
+                            </div>
+                            <p className="text-sm text-gray-500">Redirigiendo al rastreo en tiempo real...</p>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        // PANTALLA: Rastreo
+        function Tracking({ onNext }) {
+            const [status, setStatus] = useState(0);
+
+            const statuses = [
+                { label: 'Confirmado', icon: '✓' },
+                { label: 'En camino a recoger', icon: '🚗' },
+                { label: 'Recogiendo', icon: '📦' },
+                { label: 'En proceso', icon: '🌀' },
+                { label: 'En camino a entregar', icon: '🚚' },
+                { label: 'Entregado', icon: '✓' },
+            ];
+
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setStatus((prev) => Math.min(prev + 1, statuses.length - 1));
+                }, 3000);
+                return () => clearInterval(interval);
+            }, []);
+
+            return (
+                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
+                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center gap-4">
+                        <button onClick={() => onNext('home')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-2xl">←</button>
+                        <h1 className="text-2xl font-bold text-gray-900">Rastreo en vivo</h1>
+                    </div>
+
+                    <div className="px-6 py-8 space-y-8">
+                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200">
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-lg font-bold text-blue-900">Tu ropa está</h2>
+                                <span className="inline-block px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">{statuses[status].label}</span>
+                            </div>
+                            <div className="space-y-3">
+                                <div className="flex items-center text-blue-900">📍 A 2.3 km de tu hogar</div>
+                                <div className="flex items-center text-blue-900">⏱️ Llegará en ~8 minutos</div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            {statuses.map((s, index) => (
+                                <div key={index} className="flex gap-4">
+                                    <div className="flex flex-col items-center">
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${index <= status ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-400'}`}>
+                                            {index <= status ? '✓' : index + 1}
+                                        </div>
+                                        {index < statuses.length - 1 && <div className={`w-1 h-12 mt-2 ${index < status ? 'bg-purple-600' : 'bg-gray-200'}`}></div>}
+                                    </div>
+                                    <div className="flex-1 pt-2">
+                                        <p className={`font-semibold ${index <= status ? 'text-gray-900' : 'text-gray-400'}`}>{s.label}</p>
+                                        {index === status && <p className="text-xs text-purple-600 font-semibold mt-1">En progreso...</p>}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="bg-gray-50 rounded-2xl p-6 space-y-4">
+                            <h3 className="font-bold text-gray-900">Conductor</h3>
+                            <div className="flex items-center gap-4">
+                                <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold">JG</div>
+                                <div className="flex-1">
+                                    <p className="font-semibold text-gray-900">Juan García</p>
+                                    <p className="text-sm text-gray-600">⭐ 4.9 • Toyota Yaris Plateado</p>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button className="flex items-center justify-center gap-2 py-2 px-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm font-semibold">📞 Llamar</button>
+                                <button className="flex items-center justify-center gap-2 py-2 px-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-semibold">💬 Chat</button>
+                            </div>
+                        </div>
+
+                        {status === statuses.length - 1 && (
+                            <div className="bg-green-50 border-2 border-green-400 rounded-2xl p-6 text-center space-y-4 fade-in">
+                                <div className="text-5xl">🎉</div>
+                                <h3 className="font-bold text-green-900 text-lg">¡Tu ropa llegó!</h3>
+                                <p className="text-sm text-green-800">Perfectamente lavada, secada y planchada</p>
+                                <button onClick={() => onNext('home')} className="btn-primary">Volver al inicio</button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        // PANTALLA: Historial
+        function OrderHistory({ onNext }) {
+            const orders = [
+                { id: '#12345', service: 'Lavado Completo', status: 'Entregado', date: '5 de Mayo', items: 5, price: '12.99' },
+                { id: '#12344', service: 'Lavado Exprés', status: 'Entregado', date: '3 de Mayo', items: 3, price: '8.99' },
+                { id: '#12343', service: 'Servicio Premium', status: 'Entregado', date: '1 de Mayo', items: 8, price: '19.99' },
+                { id: '#12342', service: 'Planchado', status: 'Entregado', date: '28 de Abril', items: 4, price: '4.99' },
+            ];
+
+            return (
+                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
+                    <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4">
+                        <h1 className="text-2xl font-bold text-gray-900">Historial</h1>
+                    </div>
+
+                    <div className="px-6 py-8 space-y-4">
+                        {orders.map((order) => (
+                            <div key={order.id} className="card cursor-pointer hover:shadow-lg transition-all">
+                                <div className="flex items-start justify-between mb-3">
+                                    <div className="flex-1">
+                                        <p className="text-sm text-gray-600 font-medium">Pedido {order.id}</p>
+                                        <p className="text-gray-900 font-bold mt-1">{order.service}</p>
+                                    </div>
+                                    <span className="inline-block px-3 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">{order.status}</span>
+                                </div>
+                                <div className="space-y-2 py-3 border-t border-gray-100">
+                                    <div className="flex items-center justify-between text-sm text-gray-600">
+                                        <span>{order.items} prendas</span>
+                                        <span>{order.date}</span>
+                                    </div>
+                                    <p className="font-bold text-purple-600">${order.price}</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2 pt-3 border-t border-gray-100">
+                                    <button className="flex items-center justify-center gap-2 py-2 px-3 bg-purple-50 text-purple-600 font-semibold rounded-lg hover:bg-purple-100 transition-colors text-sm">🔄 Repetir</button>
+                                    <button className="flex items-center justify-center gap-2 py-2 px-3 bg-gray-50 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition-colors text-sm">📥 Recibo</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="fixed bottom-20 left-0 right-0 max-w-md mx-auto px-6 pb-4">
+                        <button onClick={() => onNext('home')} className="w-full py-3 bg-purple-600 text-white font-semibold rounded-xl hover:bg-purple-700 transition-colors">Nuevo pedido</button>
+                    </div>
+                </div>
+            );
+        }
+
+        // PANTALLA: Perfil
+        function Profile({ onNext }) {
+            return (
+                <div className="h-screen w-full bg-white overflow-y-auto pb-24 fade-in">
+                    <div className="bg-gradient-to-br from-purple-600 to-purple-700 text-white px-6 py-12 space-y-4">
+                        <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-2xl">👤</div>
+                        <div>
+                            <h1 className="text-2xl font-bold">Carolina García</h1>
+                            <p className="text-purple-100 mt-1">carolina@example.com</p>
+                        </div>
+                        <div className="bg-white bg-opacity-10 rounded-lg p-3 backdrop-blur">
+                            <p className="text-xs text-purple-100">Saldo disponible</p>
+                            <p className="text-2xl font-bold mt-1">$15.50</p>
+                        </div>
+                    </div>
+
+                    <div className="mt-8">
+                        <div className="px-6 py-3 bg-gray-50"><p className="text-xs font-bold text-gray-500 uppercase">Mi Información</p></div>
+                        <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 border-b border-gray-100">
+                            <span className="text-2xl">👤</span>
+                            <div className="text-left flex-1">
+                                <p className="font-semibold text-gray-900">Perfil</p>
+                                <p className="text-sm text-gray-500">+34 600 123 456</p>
+                            </div>
+                            <span className="text-2xl">→</span>
+                        </button>
+                        <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 border-b border-gray-100">
+                            <span className="text-2xl">📍</span>
+                            <div className="text-left flex-1">
+                                <p className="font-semibold text-gray-900">Direcciones</p>
+                                <p className="text-sm text-gray-500">3 direcciones</p>
+                            </div>
+                            <span className="text-2xl">→</span>
+                        </button>
+                        <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 border-b border-gray-100">
+                            <span className="text-2xl">💳</span>
+                            <div className="text-left flex-1">
+                                <p className="font-semibold text-gray-900">Métodos de pago</p>
+                                <p className="text-sm text-gray-500">2 tarjetas</p>
+                            </div>
+                            <span className="text-2xl">→</span>
+                        </button>
+                    </div>
+
+                    <div className="mt-8">
+                        <div className="px-6 py-3 bg-gray-50"><p className="text-xs font-bold text-gray-500 uppercase">Preferencias</p></div>
+                        <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 border-b border-gray-100">
+                            <span className="text-2xl">🔔</span>
+                            <div className="text-left flex-1">
+                                <p className="font-semibold text-gray-900">Notificaciones</p>
+                            </div>
+                            <span className="text-2xl">→</span>
+                        </button>
+                        <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 border-b border-gray-100">
+                            <span className="text-2xl">⚙️</span>
+                            <div className="text-left flex-1">
+                                <p className="font-semibold text-gray-900">Configuración</p>
+                            </div>
+                            <span className="text-2xl">→</span>
+                        </button>
+                    </div>
+
+                    <div className="mt-8 px-6">
+                        <button onClick={() => { onNext('onboarding'); }} className="w-full flex items-center gap-4 p-4 text-red-600 hover:bg-red-50 border border-red-200 rounded-xl">
+                            <span className="text-2xl">🚪</span>
+                            <span className="font-semibold flex-1 text-left">Cerrar sesión</span>
+                            <span className="text-2xl">→</span>
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // APP PRINCIPAL
+        function LaundryApp() {
+            const [screen, setScreen] = useState('onboarding');
+
+            const screens = {
+                onboarding: <Onboarding onNext={setScreen} />,
+                login: <Login onNext={setScreen} />,
+                home: <Home onNext={setScreen} />,
+                service: <SelectService onNext={setScreen} />,
+                address: <AddressSchedule onNext={setScreen} />,
+                confirmation: <Confirmation onNext={setScreen} />,
+                payment: <Payment onNext={setScreen} />,
+                tracking: <Tracking onNext={setScreen} />,
+                history: <OrderHistory onNext={setScreen} />,
+                profile: <Profile onNext={setScreen} />,
+            };
+
+            return (
+                <div className="mobile-frame flex flex-col overflow-hidden">
+                    <div className="flex-1 overflow-y-auto">
+                        {screens[screen]}
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('app')).render(<LaundryApp />);
+    </script>
+</body>
+</html>
