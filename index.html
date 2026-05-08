@@ -128,9 +128,30 @@
         .quick-action:hover { border-color: #0ea5e9; box-shadow: 0 8px 20px rgba(14, 165, 233, 0.2); transform: translateY(-3px); }
         .quick-action-icon { font-size: 32px; margin-bottom: 8px; }
         .quick-action-text { font-weight: 600; color: #0e7490; font-size: 13px; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 5000; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 25px 60px rgba(0,0,0,0.3); max-width: 400px; width: 100%; }
+        .modal-close { float: right; font-size: 24px; cursor: pointer; color: #6b7280; border: none; background: none; }
     </style>
 </head>
 <body>
+    <!-- ADMIN LOGIN MODAL -->
+    <div id="adminModal" class="modal-overlay">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeAdminModal()">×</button>
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div style="font-size: 40px; margin-bottom: 12px;">💧</div>
+                <h2 style="font-size: 22px; font-weight: 800; color: #0e7490; margin: 0 0 4px 0;">Panel Admin</h2>
+                <p style="color: #6b7280; margin: 0; font-size: 12px;">Acceso administrativo</p>
+            </div>
+            <input type="email" id="adminEmail" class="input-field" placeholder="Email" value="admin@laundry.com" style="margin-bottom: 12px;">
+            <input type="password" id="adminPass" class="input-field" placeholder="Contraseña" value="admin123" style="margin-bottom: 16px;">
+            <button class="cta-button" onclick="loginAdmin()" style="margin-bottom: 8px;">Ingresar</button>
+            <button onclick="closeAdminModal()" style="width: 100%; padding: 12px; background: #e0f2fe; color: #0c4a6e; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Cancelar</button>
+        </div>
+    </div>
+
     <!-- SPLASH -->
     <div id="splash" class="splash">
         <div class="splash-logo">💧</div>
@@ -145,8 +166,8 @@
             <p class="login-subtitle">Tu lavandería premium en línea</p>
             <button class="role-btn client" onclick="startClient()">👤 Soy Cliente</button>
             <button class="role-btn laundry" onclick="startLaundry()">🏢 Soy Gerente</button>
-            <button class="role-btn" style="background:white;color:#0e7490;border:2px solid #0ea5e9;" onclick="irAlAdmin()">
-                📊 Panel Admin Web
+            <button class="role-btn" style="background:white;color:#0e7490;border:2px solid #0ea5e9;" onclick="adminLoginModal()">
+                📊 Panel Admin
             </button>
             <p style="color:#6b7280;font-size:12px;margin-top:30px;">Demo completa • Todas las funciones activas</p>
         </div>
@@ -681,6 +702,193 @@
         </div>
     </div>
 
+    <!-- ADMIN PANEL -->
+    <div id="adminPanel" style="display: none; width: 100%; min-height: 100vh; background: #f0f9ff;">
+        <div style="display: flex; min-height: 100vh;">
+            <!-- Admin Sidebar -->
+            <div style="width: 260px; background: linear-gradient(135deg, #0ea5e9, #06b6d4); color: white; padding: 20px 0;">
+                <div style="padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px;">
+                    <div style="font-size: 28px; margin-bottom: 8px;">💧</div>
+                    <div style="font-size: 16px; font-weight: 800;">LaundryHub</div>
+                    <div style="font-size: 11px; opacity: 0.8;">Admin Panel</div>
+                </div>
+                <div class="admin-nav-item" onclick="adminShowPage('dashboard')" style="padding: 14px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; border-left: 3px solid white; background: rgba(255,255,255,0.1);"><span style="font-size: 18px;">📊</span> Dashboard</div>
+                <div class="admin-nav-item" onclick="adminShowPage('orders')" style="padding: 14px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent;"><span style="font-size: 18px;">📦</span> Órdenes</div>
+                <div class="admin-nav-item" onclick="adminShowPage('customers')" style="padding: 14px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent;"><span style="font-size: 18px;">👥</span> Clientes</div>
+                <div class="admin-nav-item" onclick="adminShowPage('drivers')" style="padding: 14px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent;"><span style="font-size: 18px;">🚗</span> Conductores</div>
+                <div class="admin-nav-item" onclick="adminShowPage('finance')" style="padding: 14px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent;"><span style="font-size: 18px;">💰</span> Finanzas</div>
+                <div class="admin-nav-item" onclick="adminLogout()" style="padding: 14px 20px; cursor: pointer; display: flex; align-items: center; gap: 12px; border-left: 3px solid transparent; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;"><span style="font-size: 18px;">🚪</span> Salir</div>
+            </div>
+
+            <!-- Admin Content -->
+            <div style="flex: 1; padding: 30px;">
+                <!-- Dashboard Page -->
+                <div id="admin-dashboard" class="admin-page">
+                    <h1 style="font-size: 28px; font-weight: 800; color: #0e7490; margin-bottom: 24px;">Dashboard</h1>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                        <div style="background: linear-gradient(135deg, #0ea5e9, #06b6d4); color: white; padding: 20px; border-radius: 12px;">
+                            <div style="font-size: 12px; opacity: 0.9; margin-bottom: 8px; font-weight: 600;">Órdenes Hoy</div>
+                            <div style="font-size: 32px; font-weight: 800;">28</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; padding: 20px; border-radius: 12px;">
+                            <div style="font-size: 12px; opacity: 0.9; margin-bottom: 8px; font-weight: 600;">Ingresos Hoy</div>
+                            <div style="font-size: 32px; font-weight: 800;">$487.50</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #0891b2, #0e7490); color: white; padding: 20px; border-radius: 12px;">
+                            <div style="font-size: 12px; opacity: 0.9; margin-bottom: 8px; font-weight: 600;">Clientes Activos</div>
+                            <div style="font-size: 32px; font-weight: 800;">156</div>
+                        </div>
+                        <div style="background: linear-gradient(135deg, #0e7490, #164e63); color: white; padding: 20px; border-radius: 12px;">
+                            <div style="font-size: 12px; opacity: 0.9; margin-bottom: 8px; font-weight: 600;">Rating Promedio</div>
+                            <div style="font-size: 32px; font-weight: 800;">4.89 ⭐</div>
+                        </div>
+                    </div>
+                    <div style="background: white; padding: 20px; border-radius: 12px;">
+                        <h3 style="font-weight: 700; color: #0e7490; margin-bottom: 16px;">Órdenes Recientes</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr style="background: #f0f9ff; font-weight: 600; color: #0e7490; font-size: 12px;">
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Orden</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Cliente</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Servicio</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Estado</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Total</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 12px;"><strong>#13045</strong></td>
+                                <td style="padding: 12px;">Carolina García</td>
+                                <td style="padding: 12px;">Lavado Completo</td>
+                                <td style="padding: 12px;"><span style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">✓ Entregado</span></td>
+                                <td style="padding: 12px; font-weight: 700;">$12.99</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 12px;"><strong>#13044</strong></td>
+                                <td style="padding: 12px;">María López</td>
+                                <td style="padding: 12px;">Premium Lujo</td>
+                                <td style="padding: 12px;"><span style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">✓ Entregado</span></td>
+                                <td style="padding: 12px; font-weight: 700;">$19.99</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px;"><strong>#13043</strong></td>
+                                <td style="padding: 12px;">Juan Pérez</td>
+                                <td style="padding: 12px;">Lavado Exprés</td>
+                                <td style="padding: 12px;"><span style="background: #e0f2fe; color: #0c4a6e; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #cffafe;">En Proceso</span></td>
+                                <td style="padding: 12px; font-weight: 700;">$8.99</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Orders Page -->
+                <div id="admin-orders" class="admin-page" style="display: none;">
+                    <h1 style="font-size: 28px; font-weight: 800; color: #0e7490; margin-bottom: 24px;">Órdenes</h1>
+                    <div style="background: white; padding: 20px; border-radius: 12px;">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr style="background: #f0f9ff; font-weight: 600; color: #0e7490; font-size: 12px;">
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Orden ID</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Cliente</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Servicio</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Dirección</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Estado</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Total</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 12px;"><strong>#13045</strong></td>
+                                <td style="padding: 12px;">Carolina García</td>
+                                <td style="padding: 12px;">Lavado Completo</td>
+                                <td style="padding: 12px; font-size: 12px;">Calle Principal 123</td>
+                                <td style="padding: 12px;"><span style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">Entregado</span></td>
+                                <td style="padding: 12px; font-weight: 700;">$12.99</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 12px;"><strong>#13044</strong></td>
+                                <td style="padding: 12px;">María López</td>
+                                <td style="padding: 12px;">Premium</td>
+                                <td style="padding: 12px; font-size: 12px;">Av Central 456</td>
+                                <td style="padding: 12px;"><span style="background: #e0f2fe; color: #0c4a6e; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; border: 1px solid #cffafe;">En Proceso</span></td>
+                                <td style="padding: 12px; font-weight: 700;">$19.99</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Customers Page -->
+                <div id="admin-customers" class="admin-page" style="display: none;">
+                    <h1 style="font-size: 28px; font-weight: 800; color: #0e7490; margin-bottom: 24px;">Clientes</h1>
+                    <div style="background: white; padding: 20px; border-radius: 12px;">
+                        <p style="color: #6b7280; font-size: 13px; margin-bottom: 16px;">Total de clientes: 156</p>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr style="background: #f0f9ff; font-weight: 600; color: #0e7490; font-size: 12px;">
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Cliente</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Email</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Órdenes</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Gasto Total</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 12px; font-weight: 600;">Carolina García</td>
+                                <td style="padding: 12px; font-size: 12px;">carolina@example.com</td>
+                                <td style="padding: 12px;">12</td>
+                                <td style="padding: 12px; font-weight: 700;">$178.50</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 12px; font-weight: 600;">María López</td>
+                                <td style="padding: 12px; font-size: 12px;">maria@example.com</td>
+                                <td style="padding: 12px;">8</td>
+                                <td style="padding: 12px; font-weight: 700;">$152.30</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Drivers Page -->
+                <div id="admin-drivers" class="admin-page" style="display: none;">
+                    <h1 style="font-size: 28px; font-weight: 800; color: #0e7490; margin-bottom: 24px;">Conductores</h1>
+                    <div style="background: white; padding: 20px; border-radius: 12px;">
+                        <p style="color: #6b7280; font-size: 13px; margin-bottom: 16px;">Equipo activo: 3 conductores</p>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr style="background: #f0f9ff; font-weight: 600; color: #0e7490; font-size: 12px;">
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Conductor</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Estado</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Entregas Hoy</td>
+                                <td style="padding: 12px; border-bottom: 2px solid #cffafe;">Rating</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 12px; font-weight: 600;">Juan García</td>
+                                <td style="padding: 12px;"><span style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">En Ruta</span></td>
+                                <td style="padding: 12px;">8</td>
+                                <td style="padding: 12px;">⭐⭐⭐⭐⭐ 4.9</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; font-weight: 600;">María Rodríguez</td>
+                                <td style="padding: 12px;"><span style="background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">En Ruta</span></td>
+                                <td style="padding: 12px;">6</td>
+                                <td style="padding: 12px;">⭐⭐⭐⭐ 4.7</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Finance Page -->
+                <div id="admin-finance" class="admin-page" style="display: none;">
+                    <h1 style="font-size: 28px; font-weight: 800; color: #0e7490; margin-bottom: 24px;">Finanzas</h1>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px; font-weight: 600;">Ingresos Este Mes</div>
+                            <div style="font-size: 28px; font-weight: 800; color: #0e7490;">$4,847.50</div>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px; font-weight: 600;">Gastos Este Mes</div>
+                            <div style="font-size: 28px; font-weight: 800; color: #ef4444;">$1,245.30</div>
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 12px;">
+                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px; font-weight: 600;">Ganancia Neta</div>
+                            <div style="font-size: 28px; font-weight: 800; color: #10b981;">$3,602.20</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         setTimeout(() => {
             document.getElementById('splash').style.display='none';
@@ -783,6 +991,48 @@
 
         function repeatOrder() {
             toScreen('checkout');
+        }
+
+        function adminLoginModal() {
+            document.getElementById('adminModal').classList.add('active');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.remove('active');
+        }
+
+        function loginAdmin() {
+            const email = document.getElementById('adminEmail').value;
+            const pass = document.getElementById('adminPass').value;
+
+            if (email && pass) {
+                closeAdminModal();
+                showAdminPanel();
+            } else {
+                alert('Por favor ingresa email y contraseña');
+            }
+        }
+
+        function showAdminPanel() {
+            document.getElementById('splash').style.display = 'none';
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('clientApp').style.display = 'none';
+            document.getElementById('laundryApp').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+        }
+
+        function adminLogout() {
+            if (confirm('¿Cerrar sesión?')) {
+                document.getElementById('adminPanel').style.display = 'none';
+                document.getElementById('login').style.display = 'flex';
+            }
+        }
+
+        function adminShowPage(pageId) {
+            document.querySelectorAll('#adminPanel .admin-page').forEach(p => p.style.display = 'none');
+            document.getElementById('admin-' + pageId).style.display = 'block';
+            document.querySelectorAll('#adminPanel .admin-nav-item').forEach(n => n.style.borderLeftColor = 'transparent');
+            event.target.closest('.admin-nav-item').style.borderLeftColor = 'white';
         }
     </script>
 </body>
