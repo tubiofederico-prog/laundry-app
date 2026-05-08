@@ -145,9 +145,9 @@
             <p class="login-subtitle">Tu lavandería premium en línea</p>
             <button class="role-btn client" onclick="startClient()">👤 Soy Cliente</button>
             <button class="role-btn laundry" onclick="startLaundry()">🏢 Soy Gerente</button>
-            <a href="./admin.html" style="width:100%;padding:16px;border-radius:16px;font-weight:700;font-size:14px;margin-bottom:16px;cursor:pointer;transition:all 0.3s;border:2px solid #0ea5e9;background:white;color:#0e7490;display:block;text-align:center;text-decoration:none;">
+            <button class="role-btn" style="background:white;color:#0e7490;border:2px solid #0ea5e9;" onclick="irAlAdmin()">
                 📊 Panel Admin Web
-            </a>
+            </button>
             <p style="color:#6b7280;font-size:12px;margin-top:30px;">Demo completa • Todas las funciones activas</p>
         </div>
     </div>
@@ -695,6 +695,11 @@
         function startLaundry() {
             document.getElementById('login').style.display='none';
             document.getElementById('laundryApp').style.display='flex';
+        }
+
+        function irAlAdmin() {
+            const url = window.location.origin + '/admin.html';
+            window.open(url, '_self');
         }
 
         function backToLogin() {
