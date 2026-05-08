@@ -195,7 +195,7 @@
                         <h2 class="hero-title">Nuestros Servicios</h2>
                         <p style="color:#6b7280;font-size:13px;margin-bottom:20px;">Elige el que mejor se adapte a ti</p>
 
-                        <div class="service-card" onclick="selectSvc(this,'Lavado Completo',12.99,'👕')">
+                        <div class="service-card" onclick="selectSvc(this,'Lavado Completo',12.99,'👕','Lavado + Secado + Planchado')">
                             <div class="service-icon">👕</div>
                             <div class="service-info">
                                 <div class="service-name">Lavado Completo</div>
@@ -204,7 +204,7 @@
                             </div>
                         </div>
 
-                        <div class="service-card" onclick="selectSvc(this,'Lavado Exprés',8.99,'⚡')">
+                        <div class="service-card" onclick="selectSvc(this,'Lavado Exprés',8.99,'⚡','Rápido y económico')">
                             <div class="service-icon">⚡</div>
                             <div class="service-info">
                                 <div class="service-name">Lavado Exprés (24h)</div>
@@ -213,7 +213,7 @@
                             </div>
                         </div>
 
-                        <div class="service-card" onclick="selectSvc(this,'Planchado Pro',4.99,'🔥')">
+                        <div class="service-card" onclick="selectSvc(this,'Planchado Pro',4.99,'🔥','Impecable y perfecto')">
                             <div class="service-icon">🔥</div>
                             <div class="service-info">
                                 <div class="service-name">Planchado Profesional</div>
@@ -222,7 +222,7 @@
                             </div>
                         </div>
 
-                        <div class="service-card" onclick="selectSvc(this,'Delicado',15.99,'✨')">
+                        <div class="service-card" onclick="selectSvc(this,'Delicado',15.99,'✨','Prendas sensibles')">
                             <div class="service-icon">✨</div>
                             <div class="service-info">
                                 <div class="service-name">Lavado Delicado</div>
@@ -231,7 +231,7 @@
                             </div>
                         </div>
 
-                        <div class="service-card" onclick="selectSvc(this,'Deportivo',10.99,'💪')">
+                        <div class="service-card" onclick="selectSvc(this,'Deportivo',10.99,'💪','Mantiene elasticidad')">
                             <div class="service-icon">💪</div>
                             <div class="service-info">
                                 <div class="service-name">Ropa Deportiva</div>
@@ -240,7 +240,7 @@
                             </div>
                         </div>
 
-                        <div class="service-card" onclick="selectSvc(this,'Premium Lujo',19.99,'👑')">
+                        <div class="service-card" onclick="selectSvc(this,'Premium Lujo',19.99,'👑','Todo + Aroma + Cuidado')">
                             <div class="service-icon">👑</div>
                             <div class="service-info">
                                 <div class="service-name">Premium Lujo Total</div>
@@ -249,7 +249,11 @@
                             </div>
                         </div>
 
-                        <button class="cta-button" onclick="toScreen('checkout')">Continuar →</button>
+                        <div id="serviceSelected" style="background:#e0f2fe;border:2px solid #0ea5e9;padding:14px;border-radius:12px;margin:20px 0;color:#0c4a6e;font-weight:600;text-align:center;display:none;">
+                            ✓ Servicio seleccionado. Ahora completa los detalles.
+                        </div>
+
+                        <button class="cta-button" id="continueBtn" onclick="validateAndContinue()" style="opacity:0.5;cursor:not-allowed;">Selecciona un Servicio ↓</button>
                     </div>
                 </div>
 
@@ -714,14 +718,48 @@
             document.getElementById(name).classList.add('active');
         }
 
-        function selectSvc(el, name, price, icon) {
+        let selectedService = null;
+
+        function selectSvc(el, name, price, icon, desc) {
+            // Remover selected de todos
+            document.querySelectorAll('.service-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Agregar selected al actual
+            el.classList.add('selected');
+
+            // Guardar el servicio seleccionado
+            selectedService = { name, price, icon, desc };
+
+            // Actualizar valores
             document.getElementById('svcName').textContent = name;
             document.getElementById('svcIcon').textContent = icon;
             document.getElementById('svcPrice').textContent = '$' + price.toFixed(2);
             document.getElementById('summaryPrice').textContent = '$' + price.toFixed(2);
-            let total = (price + 1.99 + (price * 0.09)).toFixed(2);
+
+            let shipping = 1.99;
+            let tax = (price * 0.09).toFixed(2);
+            let total = (price + shipping + parseFloat(tax)).toFixed(2);
+
             document.getElementById('summaryTotal').textContent = '$' + total;
-            document.getElementById('payBtn').textContent = 'Confirmar Pago $' + total;
+
+            // Habilitar botón
+            let btn = document.getElementById('continueBtn');
+            btn.textContent = 'Continuar al Carrito →';
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+
+            // Mostrar mensaje
+            document.getElementById('serviceSelected').style.display = 'block';
+        }
+
+        function validateAndContinue() {
+            if (!selectedService) {
+                alert('Por favor selecciona un servicio');
+                return;
+            }
+            toScreen('checkout');
         }
 
         function processPayment() {
