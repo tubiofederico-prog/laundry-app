@@ -3,724 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LaundryHub - Premium Laundry Service</title>
+    <title>LaundryHub - Premium Service</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Inter', sans-serif; }
+        body { margin: 0; padding: 0; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); min-height: 100vh; }
+
+        .splash { display: flex; align-items: center; justify-content: center; min-height: 100vh; color: white; flex-direction: column; gap: 20px; }
+        .splash-logo { font-size: 80px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+        .splash-text { font-size: 28px; font-weight: 800; }
+
+        .login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .login-box { background: white; border-radius: 40px; padding: 60px 40px; box-shadow: 0 30px 60px rgba(0,0,0,0.3); max-width: 500px; width: 100%; text-align: center; }
+        .login-logo { font-size: 70px; margin-bottom: 20px; }
+        .login-title { font-size: 32px; font-weight: 800; color: #0e7490; margin-bottom: 8px; }
+        .login-subtitle { color: #06b6d4; margin-bottom: 40px; font-size: 14px; font-weight: 600; }
+
+        .role-btn { width: 100%; padding: 20px; border-radius: 20px; font-weight: 700; font-size: 16px; margin-bottom: 16px; cursor: pointer; transition: all 0.3s; border: none; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        .role-btn:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.25); }
+        .role-btn.client { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; }
+        .role-btn.laundry { background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; }
+
+        .app-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .phone { width: 100%; max-width: 450px; height: 100vh; max-height: 920px; background: white; border-radius: 55px; box-shadow: 0 35px 80px rgba(0,0,0,0.35); display: flex; flex-direction: column; overflow: hidden; position: relative; border: 8px solid #f0f9ff; }
+
+        .app-header { padding: 24px; flex-shrink: 0; border-bottom: 1px solid #cffafe; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; }
+        .app-header h1 { margin: 0; font-size: 22px; font-weight: 800; }
+        .back-btn { background: rgba(255,255,255,0.25); border: none; color: white; width: 45px; height: 45px; border-radius: 12px; cursor: pointer; font-size: 20px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; }
+        .back-btn:hover { background: rgba(255,255,255,0.35); transform: scale(1.1); }
+
+        .app-content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0 24px 120px 24px; scroll-behavior: smooth; }
+        .app-content::-webkit-scrollbar { width: 6px; }
+        .app-content::-webkit-scrollbar-track { background: #f0f9ff; }
+        .app-content::-webkit-scrollbar-thumb { background: #06b6d4; border-radius: 10px; }
+
+        .app-tabbar { display: flex; justify-content: space-around; border-top: 2px solid #cffafe; background: white; padding: 12px 0; flex-shrink: 0; position: absolute; bottom: 0; width: 100%; max-width: 450px; }
+        .tab { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 20px; cursor: pointer; transition: all 0.3s; border: none; background: none; border-radius: 16px; font-size: 22px; }
+        .tab:hover { background: #f0f9ff; }
+        .tab.active { background: #cffafe; color: #0e7490; }
+        .tab span { font-size: 10px; font-weight: 700; color: #6b7280; }
+        .tab.active span { color: #0e7490; }
+
+        .screen { display: none; animation: fadeIn 0.4s ease-in; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero-subtitle { font-size: 12px; color: #0891b2; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+        .hero-title { font-size: 32px; font-weight: 800; color: #0e7490; margin-bottom: 12px; margin-top: 20px; }
+
+        .cta-button { width: 100%; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; padding: 18px; border-radius: 16px; border: none; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.3s; margin-bottom: 24px; box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3); }
+        .cta-button:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(14, 165, 233, 0.5); }
+        .cta-button:active { transform: scale(0.98); }
+
+        .service-card { background: white; border: 2px solid #cffafe; border-radius: 20px; padding: 18px; margin-bottom: 14px; cursor: pointer; transition: all 0.3s; display: flex; gap: 16px; }
+        .service-card:hover { border-color: #0ea5e9; box-shadow: 0 15px 35px rgba(14, 165, 233, 0.2); transform: translateY(-6px); }
+        .service-card.selected { border-color: #0ea5e9; background: linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, rgba(6, 182, 212, 0.08) 100%); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15); }
+        .service-icon { font-size: 45px; display: flex; align-items: center; justify-center; }
+        .service-info { flex: 1; }
+        .service-name { font-weight: 700; color: #0e7490; margin-bottom: 4px; font-size: 15px; }
+        .service-desc { font-size: 12px; color: #4b5563; margin-bottom: 8px; }
+        .service-price { font-weight: 800; color: #0891b2; font-size: 18px; }
+
+        .input-label { font-weight: 700; color: #0e7490; display: block; margin-bottom: 10px; font-size: 14px; }
+        .input-field { width: 100%; padding: 14px 16px; border: 2px solid #cffafe; border-radius: 12px; margin-bottom: 16px; font-family: 'Inter', sans-serif; font-size: 14px; transition: all 0.3s; }
+        .input-field:focus { outline: none; border-color: #0ea5e9; box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1); }
+        .input-field::placeholder { color: #9ca3af; }
+
+        .summary-box { background: #f0f9ff; border: 2px solid #cffafe; border-radius: 16px; padding: 18px; margin-bottom: 20px; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; font-size: 14px; color: #4b5563; }
+        .summary-row.total { border-top: 2px solid #cffafe; padding-top: 14px; margin-top: 12px; font-weight: 800; color: #0e7490; font-size: 18px; }
+
+        .status-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        .status-delivered { background: #d1fae5; color: #065f46; }
+        .status-pending { background: #e0f2fe; color: #0c4a6e; }
+        .status-processing { background: #f0f9ff; color: #0e7490; border: 1px solid #cffafe; }
+
+        .order-card { background: white; border: 2px solid #cffafe; border-radius: 16px; padding: 16px; margin-bottom: 12px; transition: all 0.3s; cursor: pointer; }
+        .order-card:hover { box-shadow: 0 10px 25px rgba(14, 165, 233, 0.15); transform: translateY(-3px); border-color: #0ea5e9; }
+        .order-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px; }
+        .order-id { font-size: 12px; color: #0891b2; font-weight: 600; }
+        .order-name { font-weight: 700; color: #0e7490; margin-top: 2px; }
+        .order-meta { font-size: 12px; color: #6b7280; }
+
+        .dashboard-card { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; padding: 24px; border-radius: 20px; margin-bottom: 16px; box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3); }
+        .dashboard-label { font-size: 12px; opacity: 0.95; margin-bottom: 10px; font-weight: 600; }
+        .dashboard-value { font-size: 38px; font-weight: 800; }
+
+        .mini-stat { background: white; border: 2px solid #cffafe; padding: 14px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .progress-bar { width: 100%; height: 8px; background: #cffafe; border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #0ea5e9 0%, #06b6d4 100%); border-radius: 4px; }
+
+        .card-brand { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; padding: 28px; border-radius: 20px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(14, 165, 233, 0.3); }
+        .card-number { font-size: 22px; letter-spacing: 4px; font-weight: 700; margin: 24px 0; }
+        .card-info { display: flex; justify-content: space-between; font-size: 12px; }
+
+        .timeline-item { display: flex; gap: 16px; margin-bottom: 22px; }
+        .timeline-dot { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+        .timeline-dot.completed { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; }
+        .timeline-dot.pending { background: #e0f2fe; color: #0c4a6e; }
+        .timeline-dot.active { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+        .timeline-text { flex: 1; }
+        .timeline-label { font-weight: 700; color: #0e7490; margin-bottom: 2px; }
+        .timeline-meta { font-size: 12px; color: #6b7280; }
+
+        .admin-action-btn { width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 12px; margin-top: 10px; transition: all 0.3s; }
+        .admin-action-btn.primary { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; }
+        .admin-action-btn.success { background: #d1fae5; color: #065f46; }
+        .admin-action-btn.danger { background: #fee2e2; color: #991b1b; }
+        .admin-action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
 
-        body {
-            margin: 0; padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
+        .section-title { font-size: 16px; font-weight: 800; color: #0e7490; margin: 28px 0 16px 0; }
+        .badge { display: inline-block; background: #0ea5e9; color: white; padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; margin-right: 8px; margin-bottom: 8px; }
+        .badge.alt { background: #e0f2fe; color: #0c4a6e; }
 
-        .splash-screen {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            color: white;
-            flex-direction: column;
-            gap: 20px;
-        }
+        .rating { display: flex; align-items: center; gap: 6px; font-weight: 700; color: #0e7490; }
+        .rating-stars { font-size: 14px; }
 
-        .splash-logo {
-            font-size: 80px;
-            animation: bounce 2s infinite;
-        }
+        .info-box { background: linear-gradient(135deg, #e0f2fe 0%, #cffafe 100%); border: 2px solid #0ea5e9; padding: 14px; border-radius: 12px; margin-bottom: 20px; color: #0c4a6e; font-size: 13px; font-weight: 500; }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .splash-text {
-            font-size: 24px;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .login-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .login-box {
-            background: white;
-            border-radius: 32px;
-            padding: 48px 32px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-            max-width: 480px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .login-logo {
-            font-size: 64px;
-            margin-bottom: 20px;
-        }
-
-        .login-title {
-            font-size: 32px;
-            font-weight: 800;
-            color: #1f2937;
-            margin-bottom: 8px;
-        }
-
-        .login-subtitle {
-            color: #6b7280;
-            margin-bottom: 40px;
-            font-size: 14px;
-        }
-
-        .role-btn {
-            width: 100%;
-            padding: 18px;
-            border-radius: 16px;
-            font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
-        }
-
-        .role-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 32px rgba(0,0,0,0.2);
-        }
-
-        .role-btn.client {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .role-btn.laundry {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-
-        .app-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .phone {
-            width: 100%;
-            max-width: 428px;
-            height: 100vh;
-            max-height: 900px;
-            background: white;
-            border-radius: 48px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .app-header {
-            padding: 20px 20px 16px 20px;
-            flex-shrink: 0;
-            border-bottom: 1px solid #f3f4f6;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .app-header.gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-        }
-
-        .app-header h1 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .back-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 20px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .back-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        .app-content {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 0 20px 100px 20px;
-            scroll-behavior: smooth;
-        }
-
-        .app-content::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .app-content::-webkit-scrollbar-track {
-            background: #f3f4f6;
-            border-radius: 10px;
-        }
-
-        .app-content::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 10px;
-        }
-
-        .app-tabbar {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            border-top: 1px solid #e5e7eb;
-            background: white;
-            padding: 12px 0;
-            flex-shrink: 0;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            max-width: 428px;
-        }
-
-        .tab {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-            background: none;
-            border-radius: 12px;
-            font-size: 22px;
-        }
-
-        .tab:hover {
-            background: #f3f4f6;
-        }
-
-        .tab.active {
-            background: #f3f4f6;
-            color: #667eea;
-        }
-
-        .tab span {
-            font-size: 10px;
-            font-weight: 600;
-            color: #6b7280;
-        }
-
-        .tab.active span {
-            color: #667eea;
-        }
-
-        .screen {
-            display: none;
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .hero-section {
-            margin-bottom: 24px;
-        }
-
-        .hero-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: #1f2937;
-            margin-bottom: 8px;
-        }
-
-        .hero-subtitle {
-            font-size: 13px;
-            color: #667eea;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-        }
-
-        .cta-button {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 16px;
-            border-radius: 16px;
-            border: none;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
-        }
-
-        .cta-button:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.4);
-        }
-
-        .service-card {
-            background: white;
-            border: 2px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            gap: 16px;
-        }
-
-        .service-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.15);
-            transform: translateY(-4px);
-        }
-
-        .service-card.selected {
-            border-color: #667eea;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-        }
-
-        .service-icon {
-            font-size: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .service-info {
-            flex: 1;
-        }
-
-        .service-name {
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 4px;
-        }
-
-        .service-desc {
-            font-size: 12px;
-            color: #6b7280;
-            margin-bottom: 8px;
-        }
-
-        .service-price {
-            font-weight: 800;
-            color: #667eea;
-            font-size: 16px;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .input-field:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .input-label {
-            font-weight: 600;
-            color: #1f2937;
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .summary-box {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            font-size: 14px;
-        }
-
-        .summary-total {
-            border-top: 2px solid #e5e7eb;
-            padding-top: 12px;
-            margin-top: 12px;
-            font-weight: 700;
-            color: #667eea;
-            font-size: 16px;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-delivered {
-            background: #d1fae5;
-            color: #047857;
-        }
-
-        .status-pending {
-            background: #fef08a;
-            color: #92400e;
-        }
-
-        .status-processing {
-            background: #fce7f3;
-            color: #be185d;
-        }
-
-        .status-in-transit {
-            background: #dbeafe;
-            color: #0369a1;
-        }
-
-        .order-card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            transition: all 0.3s;
-        }
-
-        .order-card:hover {
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 8px;
-        }
-
-        .order-id {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .order-name {
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        .order-meta {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .dashboard-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
-        }
-
-        .dashboard-label {
-            font-size: 12px;
-            opacity: 0.9;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .dashboard-value {
-            font-size: 32px;
-            font-weight: 800;
-        }
-
-        .mini-stat {
-            background: white;
-            border: 1px solid #e5e7eb;
-            padding: 12px;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #e5e7eb;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            border-radius: 3px;
-        }
-
-        .card-brand {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 24px;
-            border-radius: 16px;
-            margin-bottom: 20px;
-        }
-
-        .card-number {
-            font-size: 20px;
-            letter-spacing: 3px;
-            font-weight: 700;
-            margin: 20px 0;
-        }
-
-        .card-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-        }
-
-        .timeline {
-            margin-top: 20px;
-        }
-
-        .timeline-item {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .timeline-dot {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-
-        .timeline-dot.completed {
-            background: #667eea;
-            color: white;
-        }
-
-        .timeline-dot.pending {
-            background: #e5e7eb;
-            color: #9ca3af;
-        }
-
-        .timeline-dot.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .timeline-text {
-            flex: 1;
-        }
-
-        .timeline-label {
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 2px;
-        }
-
-        .timeline-meta {
-            font-size: 12px;
-            color: #6b7280;
-        }
-
-        .admin-action-btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 12px;
-            margin-top: 8px;
-            transition: all 0.3s;
-        }
-
-        .admin-action-btn.primary {
-            background: #667eea;
-            color: white;
-        }
-
-        .admin-action-btn.success {
-            background: #10b981;
-            color: white;
-        }
-
-        .admin-action-btn.danger {
-            background: #ef4444;
-            color: white;
-        }
-
-        .admin-action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: #1f2937;
-            margin: 24px 0 16px 0;
-        }
-
-        .badge {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-right: 8px;
-            margin-bottom: 8px;
-        }
+        .quick-action { background: white; border: 2px solid #cffafe; padding: 16px; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s; margin-bottom: 10px; }
+        .quick-action:hover { border-color: #0ea5e9; box-shadow: 0 8px 20px rgba(14, 165, 233, 0.2); transform: translateY(-3px); }
+        .quick-action-icon { font-size: 32px; margin-bottom: 8px; }
+        .quick-action-text { font-weight: 600; color: #0e7490; font-size: 13px; }
     </style>
 </head>
 <body>
-    <!-- SPLASH SCREEN -->
-    <div id="splashScreen" class="splash-screen">
-        <div class="splash-logo">🧺</div>
+    <!-- SPLASH -->
+    <div id="splash" class="splash">
+        <div class="splash-logo">💧</div>
         <div class="splash-text">LaundryHub</div>
     </div>
 
-    <!-- LOGIN SCREEN -->
-    <div id="loginScreen" class="login-container" style="display: none;">
+    <!-- LOGIN -->
+    <div id="login" class="login-screen" style="display:none;">
         <div class="login-box">
-            <div class="login-logo">🧺</div>
+            <div class="login-logo">💧</div>
             <h1 class="login-title">LaundryHub</h1>
-            <p class="login-subtitle">Tu lavandería a un click de distancia</p>
-
-            <button class="role-btn client" onclick="selectRole('client')">
-                👤 Soy Cliente
-            </button>
-
-            <button class="role-btn laundry" onclick="selectRole('laundry')">
-                🏢 Soy Dueño
-            </button>
-
-            <p style="color: #6b7280; font-size: 12px; margin-top: 24px;">
-                Demo completamente funcional • Sin datos reales
-            </p>
+            <p class="login-subtitle">Tu lavandería premium en línea</p>
+            <button class="role-btn client" onclick="startClient()">👤 Soy Cliente</button>
+            <button class="role-btn laundry" onclick="startLaundry()">🏢 Soy Dueño</button>
+            <p style="color:#6b7280;font-size:12px;margin-top:30px;">Demo completa • Todas las funciones activas</p>
         </div>
     </div>
 
     <!-- CLIENT APP -->
-    <div id="clientApp" class="app-container" style="display: none;">
+    <div id="clientApp" class="app-container" style="display:none;">
         <div class="phone">
-            <!-- CLIENT HEADER -->
-            <div class="app-header gradient">
-                <h1>LaundryHub</h1>
-                <button class="back-btn" onclick="goBack()">←</button>
+            <div class="app-header">
+                <h1>💧 LaundryHub</h1>
+                <button class="back-btn" onclick="backToLogin()">←</button>
             </div>
 
-            <!-- CLIENT CONTENT -->
             <div class="app-content">
-                <!-- HOME SCREEN -->
-                <div id="clientHome" class="screen active">
-                    <div style="padding-top: 20px;">
-                        <div class="hero-subtitle">Bienvenido</div>
+                <!-- HOME -->
+                <div id="home" class="screen active">
+                    <div style="padding-top:16px;">
+                        <div class="hero-subtitle">Bienvenido de vuelta</div>
                         <h2 class="hero-title">Hola, Carolina 👋</h2>
 
-                        <button class="cta-button" onclick="showClientScreen('service')">
-                            ✨ Solicitar Servicio
-                        </button>
+                        <button class="cta-button" onclick="toScreen('service')">✨ Solicitar Servicio Ahora</button>
 
-                        <div style="margin-bottom: 24px;">
-                            <p style="font-size: 12px; color: #667eea; font-weight: 600; margin-bottom: 8px;">Tu último pedido</p>
-                            <div class="order-card">
-                                <div class="order-header">
-                                    <div>
-                                        <div class="order-id">#12987</div>
-                                        <div class="order-name">Lavado Completo Premium</div>
-                                    </div>
-                                    <span class="status-badge status-delivered">✓ Entregado</span>
-                                </div>
-                                <div class="order-meta">8 de Mayo • 5 prendas • $12.99</div>
-                            </div>
+                        <div style="background:linear-gradient(135deg,#e0f2fe,#cffafe);padding:18px;border-radius:16px;margin-bottom:20px;border:2px solid #0ea5e9;">
+                            <div style="font-size:12px;color:#0c4a6e;font-weight:600;margin-bottom:8px;">Tu Pedido Anterior</div>
+                            <div style="font-weight:700;color:#0e7490;margin-bottom:4px;">Lavado Completo Premium</div>
+                            <div style="font-size:12px;color:#6b7280;margin-bottom:10px;">8 de Mayo • 5 prendas</div>
+                            <span class="status-badge status-delivered">✓ Entregado</span>
+                            <button class="cta-button" style="margin-top:12px;padding:12px;font-size:14px;" onclick="repeatOrder()">🔄 Repetir Pedido</button>
                         </div>
 
-                        <p style="font-size: 12px; color: #667eea; font-weight: 600; margin-bottom: 8px;">Accesos rápidos</p>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                            <button onclick="showClientScreen('service')" style="background: white; border: 2px solid #e5e7eb; padding: 20px 16px; border-radius: 12px; cursor: pointer; transition: all 0.3s; font-weight: 600;">
-                                <div style="font-size: 32px; margin-bottom: 8px;">⚡</div>
-                                <div style="font-size: 12px;">Rápido</div>
-                            </button>
-                            <button style="background: white; border: 2px solid #e5e7eb; padding: 20px 16px; border-radius: 12px; cursor: pointer; transition: all 0.3s; font-weight: 600;">
-                                <div style="font-size: 32px; margin-bottom: 8px;">🎁</div>
-                                <div style="font-size: 12px;">Ofertas</div>
-                            </button>
+                        <p class="section-title">Accesos Rápidos</p>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+                            <div class="quick-action" onclick="toScreen('service')"><div class="quick-action-icon">⚡</div><div class="quick-action-text">Rápido</div></div>
+                            <div class="quick-action" onclick="toScreen('service')"><div class="quick-action-icon">🎁</div><div class="quick-action-text">Ofertas</div></div>
+                            <div class="quick-action" onclick="toScreen('rewards')"><div class="quick-action-icon">⭐</div><div class="quick-action-text">Puntos</div></div>
+                            <div class="quick-action"><div class="quick-action-icon">📞</div><div class="quick-action-text">Soporte</div></div>
+                        </div>
+
+                        <p class="section-title">Ofertas Especiales</p>
+                        <div class="info-box">
+                            🎉 <strong>DESCUENTO 15%</strong> en tu próximo servicio Premium
                         </div>
                     </div>
                 </div>
 
-                <!-- SELECT SERVICE SCREEN -->
-                <div id="clientService" class="screen">
-                    <div style="padding-top: 20px;">
+                <!-- SERVICES -->
+                <div id="service" class="screen">
+                    <div style="padding-top:16px;">
                         <h2 class="hero-title">Nuestros Servicios</h2>
-                        <p style="color: #6b7280; font-size: 13px; margin-bottom: 20px;">Elige el servicio que mejor se adapte a tus necesidades</p>
+                        <p style="color:#6b7280;font-size:13px;margin-bottom:20px;">Elige el que mejor se adapte a ti</p>
 
-                        <div class="service-card" onclick="selectService(this, 'Lavado Completo', 12.99); showClientScreen('checkout')">
+                        <div class="service-card" onclick="selectSvc(this,'Lavado Completo',12.99,'👕')">
                             <div class="service-icon">👕</div>
                             <div class="service-info">
                                 <div class="service-name">Lavado Completo</div>
@@ -729,73 +204,76 @@
                             </div>
                         </div>
 
-                        <div class="service-card" onclick="selectService(this, 'Lavado Exprés', 8.99); showClientScreen('checkout')">
+                        <div class="service-card" onclick="selectSvc(this,'Lavado Exprés',8.99,'⚡')">
                             <div class="service-icon">⚡</div>
                             <div class="service-info">
-                                <div class="service-name">Lavado Exprés</div>
-                                <div class="service-desc">Lavado + Secado (24h)</div>
+                                <div class="service-name">Lavado Exprés (24h)</div>
+                                <div class="service-desc">Rápido y económico</div>
                                 <div class="service-price">$8.99</div>
                             </div>
                         </div>
 
-                        <div class="service-card" onclick="selectService(this, 'Planchado Profesional', 4.99); showClientScreen('checkout')">
+                        <div class="service-card" onclick="selectSvc(this,'Planchado Pro',4.99,'🔥')">
                             <div class="service-icon">🔥</div>
                             <div class="service-info">
                                 <div class="service-name">Planchado Profesional</div>
-                                <div class="service-desc">Impecable y listo para usar</div>
+                                <div class="service-desc">Impecable y perfecto</div>
                                 <div class="service-price">$4.99</div>
                             </div>
                         </div>
 
-                        <div class="service-card" onclick="selectService(this, 'Lavado Delicado', 15.99); showClientScreen('checkout')">
+                        <div class="service-card" onclick="selectSvc(this,'Delicado',15.99,'✨')">
                             <div class="service-icon">✨</div>
                             <div class="service-info">
                                 <div class="service-name">Lavado Delicado</div>
-                                <div class="service-desc">Para prendas sensibles</div>
+                                <div class="service-desc">Prendas sensibles</div>
                                 <div class="service-price">$15.99</div>
                             </div>
                         </div>
 
-                        <div class="service-card" onclick="selectService(this, 'Ropa Deportiva', 10.99); showClientScreen('checkout')">
+                        <div class="service-card" onclick="selectSvc(this,'Deportivo',10.99,'💪')">
                             <div class="service-icon">💪</div>
                             <div class="service-info">
                                 <div class="service-name">Ropa Deportiva</div>
-                                <div class="service-desc">Mantiene elasticidad y color</div>
+                                <div class="service-desc">Mantiene elasticidad</div>
                                 <div class="service-price">$10.99</div>
                             </div>
                         </div>
 
-                        <div class="service-card" onclick="selectService(this, 'Premium Lujo', 19.99); showClientScreen('checkout')">
+                        <div class="service-card" onclick="selectSvc(this,'Premium Lujo',19.99,'👑')">
                             <div class="service-icon">👑</div>
                             <div class="service-info">
-                                <div class="service-name">Premium Lujo</div>
-                                <div class="service-desc">Todo + Aroma personalizado</div>
+                                <div class="service-name">Premium Lujo Total</div>
+                                <div class="service-desc">Todo + Aroma + Cuidado</div>
                                 <div class="service-price">$19.99</div>
                             </div>
                         </div>
+
+                        <button class="cta-button" onclick="toScreen('checkout')">Continuar →</button>
                     </div>
                 </div>
 
-                <!-- CHECKOUT SCREEN -->
-                <div id="clientCheckout" class="screen">
-                    <div style="padding-top: 20px;">
-                        <h2 class="hero-title">Tu Pedido</h2>
+                <!-- CHECKOUT -->
+                <div id="checkout" class="screen">
+                    <div style="padding-top:16px;">
+                        <h2 class="hero-title">Detalles del Pedido</h2>
 
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border-radius: 16px; margin-bottom: 20px;">
-                            <div style="font-size: 32px; margin-bottom: 8px;">👕</div>
-                            <div id="checkoutServiceName" style="font-weight: 700; margin-bottom: 4px;">Lavado Completo</div>
-                            <div style="font-size: 12px; opacity: 0.9; margin-bottom: 8px;">Lavado + Secado + Planchado</div>
-                            <div id="checkoutServicePrice" style="font-size: 24px; font-weight: 800;">$12.99</div>
+                        <div style="background:linear-gradient(135deg,#0ea5e9,#06b6d4);color:white;padding:16px;border-radius:16px;margin-bottom:20px;">
+                            <div style="font-size:28px;margin-bottom:8px;" id="svcIcon">👕</div>
+                            <div style="font-weight:700;margin-bottom:4px;" id="svcName">Lavado Completo</div>
+                            <div style="font-size:12px;opacity:0.95;margin-bottom:8px;">Lavado + Secado + Planchado</div>
+                            <div style="font-size:24px;font-weight:800;" id="svcPrice">$12.99</div>
                         </div>
 
-                        <label class="input-label">📍 Tu Dirección</label>
+                        <label class="input-label">📍 Dirección de Recogida</label>
                         <input type="text" class="input-field" value="Calle Principal 123, Apto 4B" />
 
-                        <label class="input-label">📅 Fecha de Recogida</label>
+                        <label class="input-label">📅 Fecha</label>
                         <select class="input-field">
                             <option>Hoy (8 de Mayo)</option>
                             <option>Mañana (9 de Mayo)</option>
-                            <option>Pasado mañana (10 de Mayo)</option>
+                            <option>En 2 días (10 de Mayo)</option>
+                            <option>En 3 días (11 de Mayo)</option>
                         </select>
 
                         <label class="input-label">🕐 Hora Preferida</label>
@@ -807,123 +285,94 @@
                             <option>04:00 PM</option>
                         </select>
 
+                        <label class="input-label">🎟️ Código Promocional</label>
+                        <input type="text" class="input-field" placeholder="Si tienes uno, aquí va" />
+
                         <div class="summary-box">
-                            <div class="summary-row">
-                                <span>Servicio</span>
-                                <span id="summaryPrice" style="font-weight: 700;">$12.99</span>
-                            </div>
-                            <div class="summary-row">
-                                <span>Envío</span>
-                                <span style="font-weight: 700;">$1.99</span>
-                            </div>
-                            <div class="summary-total">
-                                Total: <span id="summaryTotal">$14.98</span>
-                            </div>
+                            <div class="summary-row"><span>Servicio</span><span id="summaryPrice" style="font-weight:700;color:#0e7490;">$12.99</span></div>
+                            <div class="summary-row"><span>Envío</span><span style="font-weight:700;color:#0e7490;">$1.99</span></div>
+                            <div class="summary-row"><span>Impuesto</span><span style="font-weight:700;color:#0e7490;">$1.14</span></div>
+                            <div class="summary-row total"><span>Total</span><span id="summaryTotal" style="color:#0ea5e9;">$16.12</span></div>
                         </div>
 
-                        <button class="cta-button" onclick="showClientScreen('payment')">
-                            Continuar al Pago
-                        </button>
+                        <button class="cta-button" onclick="toScreen('payment')">Ir al Pago 💳</button>
                     </div>
                 </div>
 
-                <!-- PAYMENT SCREEN -->
-                <div id="clientPayment" class="screen">
-                    <div style="padding-top: 20px;">
+                <!-- PAYMENT -->
+                <div id="payment" class="screen">
+                    <div style="padding-top:16px;">
                         <h2 class="hero-title">Pago Seguro</h2>
 
                         <div class="card-brand">
-                            <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">VISA</div>
+                            <div style="font-size:12px;opacity:0.85;">VISA</div>
                             <div class="card-number">•••• •••• •••• 4242</div>
                             <div class="card-info">
-                                <div>
-                                    <div style="opacity: 0.8; font-size: 10px;">Titular</div>
-                                    <div style="font-weight: 700;">CAROLINA GARCÍA</div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <div style="opacity: 0.8; font-size: 10px;">Vence</div>
-                                    <div style="font-weight: 700;">12/26</div>
-                                </div>
+                                <div><div style="opacity:0.85;font-size:10px;">Titular</div><div style="font-weight:700;">CAROLINA GARCÍA</div></div>
+                                <div style="text-align:right;"><div style="opacity:0.85;font-size:10px;">Vence</div><div style="font-weight:700;">12/27</div></div>
                             </div>
                         </div>
 
-                        <div style="background: #dcfce7; border: 1px solid #86efac; padding: 12px; border-radius: 12px; margin-bottom: 20px; color: #15803d; font-size: 12px; font-weight: 500;">
-                            ✓ Pago 100% seguro y encriptado
-                        </div>
+                        <div class="info-box">✓ Pago 100% seguro y encriptado con SSL</div>
 
-                        <button class="cta-button" onclick="completePayment()">
-                            <span id="paymentBtn">Pagar $14.98</span>
-                        </button>
+                        <button class="cta-button" onclick="processPayment()" id="payBtn">Confirmar Pago $16.12</button>
+
+                        <button style="width:100%;background:#e0f2fe;border:2px solid #0ea5e9;color:#0c4a6e;padding:14px;border-radius:12px;font-weight:600;cursor:pointer;margin-top:10px;">Usar Otro Método</button>
                     </div>
                 </div>
 
-                <!-- TRACKING SCREEN -->
-                <div id="clientTracking" class="screen">
-                    <div style="padding-top: 20px;">
-                        <h2 class="hero-title">Rastreo en Vivo</h2>
+                <!-- TRACKING -->
+                <div id="tracking" class="screen">
+                    <div style="padding-top:16px;">
+                        <h2 class="hero-title">Tu Pedido en Vivo</h2>
 
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; border-radius: 16px; margin-bottom: 20px;">
-                            <div style="font-weight: 700; margin-bottom: 8px;">✓ Tu ropa está en camino</div>
-                            <div style="font-size: 12px; opacity: 0.9;">📍 A 1.2 km de tu hogar</div>
-                            <div style="font-size: 12px; opacity: 0.9;">⏰ Llegará en aproximadamente 6 minutos</div>
+                        <div style="background:linear-gradient(135deg,#0ea5e9,#06b6d4);color:white;padding:16px;border-radius:16px;margin-bottom:20px;">
+                            <div style="font-weight:700;margin-bottom:8px;">✓ Tu ropa está en camino</div>
+                            <div style="font-size:12px;opacity:0.9;">📍 A 0.8 km de tu hogar</div>
+                            <div style="font-size:12px;opacity:0.9;">⏰ Llegará en ~5 minutos</div>
                         </div>
 
-                        <div class="timeline">
+                        <div style="background:#e0f2fe;border:2px solid #0ea5e9;padding:14px;border-radius:12px;margin-bottom:20px;">
+                            <div style="font-weight:700;color:#0c4a6e;margin-bottom:8px;">Juan García 👨‍💼</div>
+                            <div class="rating"><span class="rating-stars">⭐⭐⭐⭐⭐</span> <span style="color:#0c4a6e;">4.9</span></div>
+                            <button style="width:100%;margin-top:10px;background:#0ea5e9;color:white;padding:10px;border-radius:8px;border:none;font-weight:600;cursor:pointer;">📞 Llamar</button>
+                        </div>
+
+                        <div>
                             <div class="timeline-item">
                                 <div class="timeline-dot completed">✓</div>
-                                <div class="timeline-text">
-                                    <div class="timeline-label">Confirmado</div>
-                                    <div class="timeline-meta">08:30 AM hoy</div>
-                                </div>
+                                <div class="timeline-text"><div class="timeline-label">Confirmado</div><div class="timeline-meta">08:30 AM</div></div>
                             </div>
-
                             <div class="timeline-item">
                                 <div class="timeline-dot completed">✓</div>
-                                <div class="timeline-text">
-                                    <div class="timeline-label">En camino al hogar</div>
-                                    <div class="timeline-meta">08:45 AM hoy</div>
-                                </div>
+                                <div class="timeline-text"><div class="timeline-label">En camino</div><div class="timeline-meta">08:45 AM</div></div>
                             </div>
-
                             <div class="timeline-item">
                                 <div class="timeline-dot active">3</div>
-                                <div class="timeline-text">
-                                    <div class="timeline-label">En proceso</div>
-                                    <div class="timeline-meta">Estamos lavando tu ropa</div>
-                                </div>
+                                <div class="timeline-text"><div class="timeline-label">En proceso</div><div class="timeline-meta">Lavando tu ropa ahora</div></div>
                             </div>
-
                             <div class="timeline-item">
                                 <div class="timeline-dot pending">4</div>
-                                <div class="timeline-text">
-                                    <div class="timeline-label">Entrega</div>
-                                    <div class="timeline-meta">Pronto en tu hogar</div>
-                                </div>
+                                <div class="timeline-text"><div class="timeline-label">Entrega</div><div class="timeline-meta">Pronto en tu hogar</div></div>
                             </div>
-                        </div>
-
-                        <div style="background: #fef3c7; border: 1px solid #fcd34d; padding: 16px; border-radius: 12px; margin-top: 20px; color: #92400e; font-size: 12px;">
-                            <div style="font-weight: 700; margin-bottom: 4px;">👤 Juan García</div>
-                            <div>Tu conductor • ⭐⭐⭐⭐⭐ (4.9)</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- HISTORY SCREEN -->
-                <div id="clientHistory" class="screen">
-                    <div style="padding-top: 20px;">
+                <!-- HISTORY -->
+                <div id="history" class="screen">
+                    <div style="padding-top:16px;">
                         <h2 class="hero-title">Mi Historial</h2>
-                        <p style="color: #6b7280; font-size: 13px; margin-bottom: 20px;">Todos tus pedidos en un solo lugar</p>
 
                         <div class="order-card">
                             <div class="order-header">
                                 <div>
                                     <div class="order-id">#12987</div>
-                                    <div class="order-name">Lavado Completo Premium</div>
+                                    <div class="order-name">Lavado Completo</div>
                                 </div>
                                 <span class="status-badge status-delivered">✓ Entregado</span>
                             </div>
-                            <div class="order-meta">8 de Mayo • 5 prendas • $12.99</div>
+                            <div class="order-meta">8 Mayo • 5 prendas • $12.99</div>
                         </div>
 
                         <div class="order-card">
@@ -934,122 +383,132 @@
                                 </div>
                                 <span class="status-badge status-delivered">✓ Entregado</span>
                             </div>
-                            <div class="order-meta">5 de Mayo • 3 prendas • $8.99</div>
+                            <div class="order-meta">5 Mayo • 3 prendas • $8.99</div>
                         </div>
 
                         <div class="order-card">
                             <div class="order-header">
                                 <div>
                                     <div class="order-id">#12876</div>
-                                    <div class="order-name">Premium Lujo con Aroma</div>
+                                    <div class="order-name">Premium Lujo</div>
                                 </div>
                                 <span class="status-badge status-delivered">✓ Entregado</span>
                             </div>
-                            <div class="order-meta">2 de Mayo • 8 prendas • $19.99</div>
-                        </div>
-
-                        <div class="order-card">
-                            <div class="order-header">
-                                <div>
-                                    <div class="order-id">#12765</div>
-                                    <div class="order-name">Lavado Delicado</div>
-                                </div>
-                                <span class="status-badge status-delivered">✓ Entregado</span>
-                            </div>
-                            <div class="order-meta">29 de Abril • 4 prendas • $15.99</div>
+                            <div class="order-meta">2 Mayo • 8 prendas • $19.99</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- PROFILE SCREEN -->
-                <div id="clientProfile" class="screen">
-                    <div style="padding-top: 20px;">
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 20px;">
-                            <div style="font-size: 48px; margin-bottom: 12px;">👤</div>
-                            <h2 style="font-size: 24px; font-weight: 800; margin: 0 0 4px 0;">Carolina García</h2>
-                            <p style="margin: 0 0 16px 0; opacity: 0.9;">carolina@example.com</p>
-                            <div style="background: rgba(255,255,255,0.15); padding: 12px; border-radius: 8px;">
-                                <div style="font-size: 12px; opacity: 0.9; margin-bottom: 4px;">Saldo Disponible</div>
-                                <div style="font-size: 24px; font-weight: 800;">$15.50</div>
+                <!-- REWARDS -->
+                <div id="rewards" class="screen">
+                    <div style="padding-top:16px;">
+                        <h2 class="hero-title">Tus Puntos</h2>
+
+                        <div class="dashboard-card" style="margin-bottom:20px;">
+                            <div class="dashboard-label">Puntos Disponibles</div>
+                            <div class="dashboard-value">2,450</div>
+                            <div style="margin-top:12px;font-size:12px;opacity:0.9;">Próxima recompensa: 550 puntos</div>
+                        </div>
+
+                        <div class="progress-bar" style="margin-bottom:20px;height:10px;">
+                            <div class="progress-fill" style="width:81.67%;"></div>
+                        </div>
+
+                        <p class="section-title">Canjeables</p>
+                        <div class="order-card">
+                            <div style="font-weight:700;color:#0e7490;margin-bottom:4px;">Lavado Gratis</div>
+                            <div style="font-size:12px;color:#6b7280;margin-bottom:8px;">500 puntos</div>
+                            <button class="cta-button" style="padding:10px;font-size:13px;margin-bottom:0;">Canjear</button>
+                        </div>
+
+                        <div class="order-card">
+                            <div style="font-weight:700;color:#0e7490;margin-bottom:4px;">15% Descuento</div>
+                            <div style="font-size:12px;color:#6b7280;margin-bottom:8px;">1000 puntos</div>
+                            <button class="cta-button" style="padding:10px;font-size:13px;margin-bottom:0;">Canjear</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROFILE -->
+                <div id="profile" class="screen">
+                    <div style="padding-top:16px;">
+                        <div style="background:linear-gradient(135deg,#0ea5e9,#06b6d4);color:white;padding:24px;border-radius:20px;margin-bottom:20px;">
+                            <div style="font-size:48px;margin-bottom:12px;">👤</div>
+                            <h2 style="font-size:24px;font-weight:800;margin:0 0 4px 0;">Carolina García</h2>
+                            <p style="margin:0 0 16px 0;opacity:0.9;">carolina@example.com</p>
+                            <div style="background:rgba(255,255,255,0.15);padding:12px;border-radius:8px;">
+                                <div style="font-size:12px;opacity:0.9;margin-bottom:4px;">Saldo Disponible</div>
+                                <div style="font-size:24px;font-weight:800;">$25.50</div>
                             </div>
                         </div>
 
-                        <p style="font-size: 12px; color: #667eea; font-weight: 600; margin-bottom: 8px;">Opciones</p>
-                        <button style="width: 100%; background: white; border: 1px solid #e5e7eb; padding: 12px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">⚙️ Configuración</button>
-                        <button style="width: 100%; background: white; border: 1px solid #e5e7eb; padding: 12px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">💳 Métodos de Pago</button>
-                        <button style="width: 100%; background: white; border: 1px solid #e5e7eb; padding: 12px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='white'">📞 Soporte 24/7</button>
+                        <p class="section-title">Mi Cuenta</p>
+                        <button style="width:100%;background:white;border:2px solid #cffafe;padding:12px;border-radius:12px;cursor:pointer;margin-bottom:8px;font-weight:600;color:#0e7490;">⚙️ Configuración</button>
+                        <button style="width:100%;background:white;border:2px solid #cffafe;padding:12px;border-radius:12px;cursor:pointer;margin-bottom:8px;font-weight:600;color:#0e7490;">💳 Métodos de Pago</button>
+                        <button style="width:100%;background:white;border:2px solid #cffafe;padding:12px;border-radius:12px;cursor:pointer;margin-bottom:8px;font-weight:600;color:#0e7490;">📍 Direcciones</button>
+                        <button style="width:100%;background:white;border:2px solid #cffafe;padding:12px;border-radius:12px;cursor:pointer;margin-bottom:8px;font-weight:600;color:#0e7490;">📞 Soporte 24/7</button>
                     </div>
                 </div>
             </div>
 
-            <!-- CLIENT TABBAR -->
             <div class="app-tabbar">
-                <button class="tab active" onclick="showClientTab('home', this)">
-                    <span>🏠</span>
-                </button>
-                <button class="tab" onclick="showClientTab('history', this)">
-                    <span>📋</span>
-                </button>
-                <button class="tab" onclick="showClientTab('tracking', this)">
-                    <span>📍</span>
-                </button>
-                <button class="tab" onclick="showClientTab('profile', this)">
-                    <span>⚙️</span>
-                </button>
+                <button class="tab active" onclick="switchTab('home',this)"><span>🏠</span></button>
+                <button class="tab" onclick="switchTab('history',this)"><span>📋</span></button>
+                <button class="tab" onclick="switchTab('tracking',this)"><span>📍</span></button>
+                <button class="tab" onclick="switchTab('rewards',this)"><span>⭐</span></button>
+                <button class="tab" onclick="switchTab('profile',this)"><span>👤</span></button>
             </div>
         </div>
     </div>
 
-    <!-- LAUNDRY ADMIN APP -->
-    <div id="laundryApp" class="app-container" style="display: none;">
+    <!-- LAUNDRY APP -->
+    <div id="laundryApp" class="app-container" style="display:none;">
         <div class="phone">
-            <!-- LAUNDRY HEADER -->
-            <div class="app-header gradient" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <h1>LaundryHub Manager</h1>
-                <button class="back-btn" onclick="goBack()">←</button>
+            <div class="app-header">
+                <h1>💧 Manager</h1>
+                <button class="back-btn" onclick="backToLogin()">←</button>
             </div>
 
-            <!-- LAUNDRY CONTENT -->
             <div class="app-content">
-                <!-- DASHBOARD SCREEN -->
-                <div id="laundryDashboard" class="screen active">
-                    <div style="padding-top: 20px;">
-                        <div class="hero-subtitle">Hoy</div>
+                <!-- DASHBOARD -->
+                <div id="dashboard" class="screen active">
+                    <div style="padding-top:16px;">
+                        <div class="hero-subtitle">Análisis de Hoy</div>
                         <h2 class="hero-title">Dashboard</h2>
 
                         <div class="dashboard-card">
                             <div class="dashboard-label">Órdenes Completadas</div>
-                            <div class="dashboard-value">12</div>
+                            <div class="dashboard-value">18</div>
                         </div>
 
-                        <div class="dashboard-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <div class="dashboard-card" style="background:linear-gradient(135deg,#06b6d4 0%,#0891b2 100%);">
                             <div class="dashboard-label">Ingresos Hoy</div>
-                            <div class="dashboard-value">$152.87</div>
+                            <div class="dashboard-value">$247.50</div>
                         </div>
 
-                        <div class="dashboard-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        <div class="dashboard-card" style="background:linear-gradient(135deg,#0891b2 0%,#0e7490 100%);">
                             <div class="dashboard-label">Rating Promedio</div>
-                            <div class="dashboard-value">4.9 ⭐</div>
+                            <div class="dashboard-value">4.92 ⭐</div>
                         </div>
 
                         <p class="section-title">Órdenes Pendientes</p>
 
-                        <div class="order-card" style="border-left: 4px solid #fef08a;">
+                        <div class="order-card" style="border-left:4px solid #0ea5e9;">
                             <div class="order-header">
                                 <div>
-                                    <div class="order-id">#13001</div>
+                                    <div class="order-id">#13004</div>
                                     <div class="order-name">Lavado Completo</div>
                                 </div>
                                 <span class="status-badge status-pending">⏳ Pendiente</span>
                             </div>
                             <div class="order-meta">Carolina García • 5 prendas • $12.99</div>
-                            <button class="admin-action-btn primary">📍 Asignar a Conductor</button>
+                            <button class="admin-action-btn primary">📍 Asignar Conductor</button>
                         </div>
 
-                        <div class="order-card" style="border-left: 4px solid #fce7f3;">
+                        <div class="order-card" style="border-left:4px solid #06b6d4;">
                             <div class="order-header">
                                 <div>
-                                    <div class="order-id">#12998</div>
+                                    <div class="order-id">#13003</div>
                                     <div class="order-name">Premium Lujo</div>
                                 </div>
                                 <span class="status-badge status-processing">🔄 En Proceso</span>
@@ -1058,247 +517,226 @@
                             <button class="admin-action-btn success">✓ Marcar Entregado</button>
                         </div>
 
-                        <div class="order-card" style="border-left: 4px solid #dbeafe;">
+                        <div class="order-card" style="border-left:4px solid #0891b2;">
                             <div class="order-header">
                                 <div>
-                                    <div class="order-id">#12987</div>
+                                    <div class="order-id">#13002</div>
                                     <div class="order-name">Lavado Exprés</div>
                                 </div>
-                                <span class="status-badge status-in-transit">📦 En Camino</span>
+                                <span class="status-badge status-processing">📦 En Camino</span>
                             </div>
                             <div class="order-meta">Juan Pérez • 3 prendas • $8.99</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- ORDERS SCREEN -->
-                <div id="laundryOrders" class="screen">
-                    <div style="padding-top: 20px;">
-                        <h2 class="hero-title">Órdenes</h2>
-                        <p style="color: #6b7280; font-size: 13px; margin-bottom: 16px;">Gestiona todos tus pedidos</p>
+                <!-- ORDERS -->
+                <div id="orders" class="screen">
+                    <div style="padding-top:16px;">
+                        <h2 class="hero-title">Todas las Órdenes</h2>
 
-                        <div style="margin-bottom: 16px;">
-                            <span class="badge">Todas</span>
-                            <span class="badge" style="background: #fef08a; color: #92400e;">Pendientes</span>
-                            <span class="badge" style="background: #fce7f3; color: #be185d;">En Proceso</span>
+                        <div style="margin-bottom:16px;">
+                            <span class="badge">Todas (25)</span>
+                            <span class="badge alt">Pendientes (3)</span>
+                            <span class="badge alt">En Proceso (5)</span>
                         </div>
 
-                        <div class="order-card" style="border-left: 4px solid #fef08a;">
+                        <div class="order-card" style="border-left:4px solid #0ea5e9;">
                             <div class="order-header">
-                                <div>
-                                    <div class="order-id">#13001</div>
-                                    <div class="order-name">Lavado Completo</div>
-                                </div>
+                                <div><div class="order-id">#13004</div><div class="order-name">Lavado Completo</div></div>
                                 <span class="status-badge status-pending">Pendiente</span>
                             </div>
-                            <div class="order-meta">Carolina García • Calle Principal 123 • Hoy 10:00 AM</div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                            <div class="order-meta">Carolina • Calle Principal 123 • Hoy 10:00 AM</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
                                 <button class="admin-action-btn primary">Asignar</button>
                                 <button class="admin-action-btn danger">Cancelar</button>
                             </div>
                         </div>
 
-                        <div class="order-card" style="border-left: 4px solid #fce7f3;">
+                        <div class="order-card" style="border-left:4px solid #06b6d4;">
                             <div class="order-header">
-                                <div>
-                                    <div class="order-id">#12998</div>
-                                    <div class="order-name">Premium Lujo</div>
-                                </div>
+                                <div><div class="order-id">#13003</div><div class="order-name">Premium Lujo</div></div>
                                 <span class="status-badge status-processing">En Proceso</span>
                             </div>
-                            <div class="order-meta">María López • Av. Central 456 • Hoy 02:00 PM</div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
+                            <div class="order-meta">María López • Av Central 456 • Hoy 2:00 PM</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
                                 <button class="admin-action-btn success">Entregado</button>
                                 <button class="admin-action-btn danger">Problema</button>
                             </div>
                         </div>
-
-                        <div class="order-card" style="border-left: 4px solid #dbeafe;">
-                            <div class="order-header">
-                                <div>
-                                    <div class="order-id">#12987</div>
-                                    <div class="order-name">Lavado Exprés</div>
-                                </div>
-                                <span class="status-badge status-in-transit">En Camino</span>
-                            </div>
-                            <div class="order-meta">Juan Pérez • Calle 5 # 123 • Hoy 04:30 PM</div>
-                        </div>
                     </div>
                 </div>
 
-                <!-- ANALYTICS SCREEN -->
-                <div id="laundryAnalytics" class="screen">
-                    <div style="padding-top: 20px;">
+                <!-- ANALYTICS -->
+                <div id="analytics" class="screen">
+                    <div style="padding-top:16px;">
                         <h2 class="hero-title">Analítica</h2>
 
                         <div class="dashboard-card">
                             <div class="dashboard-label">Ingresos Esta Semana</div>
-                            <div class="dashboard-value">$987.43</div>
+                            <div class="dashboard-value">$1,547.80</div>
                         </div>
 
-                        <div class="dashboard-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <div class="dashboard-card" style="background:linear-gradient(135deg,#06b6d4 0%,#0891b2 100%);">
                             <div class="dashboard-label">Órdenes Esta Semana</div>
-                            <div class="dashboard-value">67</div>
+                            <div class="dashboard-value">124</div>
                         </div>
 
-                        <div class="dashboard-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        <div class="dashboard-card" style="background:linear-gradient(135deg,#0891b2 0%,#0e7490 100%);">
                             <div class="dashboard-label">Promedio por Orden</div>
-                            <div class="dashboard-value">$14.73</div>
+                            <div class="dashboard-value">$12.48</div>
                         </div>
 
                         <p class="section-title">Servicios Populares</p>
 
                         <div class="mini-stat">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; margin-bottom: 6px;">Lavado Completo</div>
+                            <div style="flex:1;">
+                                <div style="font-weight:600;color:#0e7490;margin-bottom:6px;">Lavado Completo</div>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 45%;"></div>
+                                    <div class="progress-fill" style="width:48%;"></div>
                                 </div>
                             </div>
-                            <div style="font-weight: 700; color: #667eea; text-align: right;">45%</div>
+                            <div style="font-weight:700;color:#0ea5e9;">48%</div>
                         </div>
 
                         <div class="mini-stat">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; margin-bottom: 6px;">Premium Lujo</div>
+                            <div style="flex:1;">
+                                <div style="font-weight:600;color:#0e7490;margin-bottom:6px;">Premium Lujo</div>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 30%;"></div>
+                                    <div class="progress-fill" style="width:32%;"></div>
                                 </div>
                             </div>
-                            <div style="font-weight: 700; color: #667eea; text-align: right;">30%</div>
+                            <div style="font-weight:700;color:#0ea5e9;">32%</div>
                         </div>
 
                         <div class="mini-stat">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; margin-bottom: 6px;">Lavado Exprés</div>
+                            <div style="flex:1;">
+                                <div style="font-weight:600;color:#0e7490;margin-bottom:6px;">Lavado Exprés</div>
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 25%;"></div>
+                                    <div class="progress-fill" style="width:20%;"></div>
                                 </div>
                             </div>
-                            <div style="font-weight: 700; color: #667eea; text-align: right;">25%</div>
+                            <div style="font-weight:700;color:#0ea5e9;">20%</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- TEAM SCREEN -->
-                <div id="laundryTeam" class="screen">
-                    <div style="padding-top: 20px;">
+                <!-- TEAM -->
+                <div id="team" class="screen">
+                    <div style="padding-top:16px;">
                         <h2 class="hero-title">Mi Equipo</h2>
-                        <p style="color: #6b7280; font-size: 13px; margin-bottom: 16px;">Conductores y operadores</p>
 
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="background:white;border:2px solid #cffafe;border-radius:16px;padding:16px;margin-bottom:12px;">
+                            <div style="display:flex;justify-content:space-between;align-items:start;">
                                 <div>
-                                    <div style="font-weight: 700; color: #1f2937; margin-bottom: 4px;">Juan García</div>
-                                    <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">Conductor • ⭐⭐⭐⭐⭐ 4.9</div>
-                                    <span class="badge" style="background: #dcfce7; color: #047857;">En Ruta</span>
+                                    <div style="font-weight:700;color:#0e7490;margin-bottom:4px;">Juan García</div>
+                                    <div style="font-size:12px;color:#6b7280;margin-bottom:8px;">Conductor Premium</div>
+                                    <div class="rating"><span class="rating-stars">⭐⭐⭐⭐⭐</span> <span style="font-weight:700;color:#0e7490;">4.9</span></div>
+                                    <span class="badge" style="margin-top:8px;">En Ruta</span>
                                 </div>
-                                <div style="text-align: right; font-size: 12px; color: #667eea; font-weight: 600;">5 entregas hoy</div>
+                                <div style="text-align:right;font-size:12px;color:#0ea5e9;font-weight:700;">6 entregas hoy</div>
                             </div>
                         </div>
 
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="background:white;border:2px solid #cffafe;border-radius:16px;padding:16px;margin-bottom:12px;">
+                            <div style="display:flex;justify-content:space-between;align-items:start;">
                                 <div>
-                                    <div style="font-weight: 700; color: #1f2937; margin-bottom: 4px;">María Rodríguez</div>
-                                    <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">Operadora • ⭐⭐⭐⭐ 4.7</div>
-                                    <span class="badge" style="background: #dbeafe; color: #0369a1;">Disponible</span>
+                                    <div style="font-weight:700;color:#0e7490;margin-bottom:4px;">María Rodríguez</div>
+                                    <div style="font-size:12px;color:#6b7280;margin-bottom:8px;">Operadora</div>
+                                    <div class="rating"><span class="rating-stars">⭐⭐⭐⭐</span> <span style="font-weight:700;color:#0e7490;">4.7</span></div>
+                                    <span class="badge alt" style="margin-top:8px;">Disponible</span>
                                 </div>
-                                <div style="text-align: right; font-size: 12px; color: #667eea; font-weight: 600;">3 entregas hoy</div>
+                                <div style="text-align:right;font-size:12px;color:#0ea5e9;font-weight:700;">4 entregas hoy</div>
                             </div>
                         </div>
 
-                        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="background:white;border:2px solid #cffafe;border-radius:16px;padding:16px;margin-bottom:12px;">
+                            <div style="display:flex;justify-content:space-between;align-items:start;">
                                 <div>
-                                    <div style="font-weight: 700; color: #1f2937; margin-bottom: 4px;">Carlos Mendoza</div>
-                                    <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px;">Conductor • ⭐⭐⭐⭐⭐ 4.8</div>
-                                    <span class="badge" style="background: #fef08a; color: #92400e;">Descansando</span>
+                                    <div style="font-weight:700;color:#0e7490;margin-bottom:4px;">Carlos Mendoza</div>
+                                    <div style="font-size:12px;color:#6b7280;margin-bottom:8px;">Conductor</div>
+                                    <div class="rating"><span class="rating-stars">⭐⭐⭐⭐⭐</span> <span style="font-weight:700;color:#0e7490;">4.8</span></div>
+                                    <span class="badge alt" style="margin-top:8px;">Descansando</span>
                                 </div>
-                                <div style="text-align: right; font-size: 12px; color: #667eea; font-weight: 600;">7 entregas hoy</div>
+                                <div style="text-align:right;font-size:12px;color:#0ea5e9;font-weight:700;">8 entregas hoy</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- LAUNDRY TABBAR -->
             <div class="app-tabbar">
-                <button class="tab active" onclick="showLaundryTab('dashboard', this)">
-                    <span>📊</span>
-                </button>
-                <button class="tab" onclick="showLaundryTab('orders', this)">
-                    <span>📦</span>
-                </button>
-                <button class="tab" onclick="showLaundryTab('analytics', this)">
-                    <span>📈</span>
-                </button>
-                <button class="tab" onclick="showLaundryTab('team', this)">
-                    <span>👥</span>
-                </button>
+                <button class="tab active" onclick="switchLaundryTab('dashboard',this)"><span>📊</span></button>
+                <button class="tab" onclick="switchLaundryTab('orders',this)"><span>📦</span></button>
+                <button class="tab" onclick="switchLaundryTab('analytics',this)"><span>📈</span></button>
+                <button class="tab" onclick="switchLaundryTab('team',this)"><span>👥</span></button>
             </div>
         </div>
     </div>
 
     <script>
-        // Init splash screen
         setTimeout(() => {
-            document.getElementById('splashScreen').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('splash').style.display='none';
+            document.getElementById('login').style.display='flex';
         }, 2000);
 
-        function selectRole(role) {
-            document.getElementById('loginScreen').style.display = 'none';
-            if (role === 'client') {
-                document.getElementById('clientApp').style.display = 'flex';
-            } else {
-                document.getElementById('laundryApp').style.display = 'flex';
-            }
+        function startClient() {
+            document.getElementById('login').style.display='none';
+            document.getElementById('clientApp').style.display='flex';
         }
 
-        function goBack() {
-            document.getElementById('clientApp').style.display = 'none';
-            document.getElementById('laundryApp').style.display = 'none';
-            document.getElementById('loginScreen').style.display = 'flex';
-            showClientScreen('home');
-            showLaundryTab('dashboard', document.querySelector('#laundryApp .tab'));
+        function startLaundry() {
+            document.getElementById('login').style.display='none';
+            document.getElementById('laundryApp').style.display='flex';
         }
 
-        function showClientScreen(screenName) {
+        function backToLogin() {
+            document.getElementById('clientApp').style.display='none';
+            document.getElementById('laundryApp').style.display='none';
+            document.getElementById('login').style.display='flex';
+        }
+
+        function toScreen(name) {
             document.querySelectorAll('#clientApp .screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('client' + screenName.charAt(0).toUpperCase() + screenName.slice(1)).classList.add('active');
+            document.getElementById(name).classList.add('active');
         }
 
-        function showClientTab(tabName, btn) {
+        function switchTab(name, btn) {
             document.querySelectorAll('#clientApp .tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
-            showClientScreen(tabName);
+            toScreen(name);
         }
 
-        function showLaundryTab(tabName, btn) {
+        function switchLaundryTab(name, btn) {
             document.querySelectorAll('#laundryApp .tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
             document.querySelectorAll('#laundryApp .screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('laundry' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+            document.getElementById(name).classList.add('active');
         }
 
-        function selectService(el, name, price) {
-            document.getElementById('checkoutServiceName').textContent = name;
-            document.getElementById('checkoutServicePrice').textContent = '$' + price.toFixed(2);
+        function selectSvc(el, name, price, icon) {
+            document.getElementById('svcName').textContent = name;
+            document.getElementById('svcIcon').textContent = icon;
+            document.getElementById('svcPrice').textContent = '$' + price.toFixed(2);
             document.getElementById('summaryPrice').textContent = '$' + price.toFixed(2);
-            const total = (price + 1.99).toFixed(2);
+            let total = (price + 1.99 + (price * 0.09)).toFixed(2);
             document.getElementById('summaryTotal').textContent = '$' + total;
-            document.getElementById('paymentBtn').textContent = 'Pagar $' + total;
+            document.getElementById('payBtn').textContent = 'Confirmar Pago $' + total;
         }
 
-        function completePayment() {
-            document.getElementById('paymentBtn').textContent = 'Procesando...';
-            document.getElementById('paymentBtn').disabled = true;
+        function processPayment() {
+            let btn = document.getElementById('payBtn');
+            btn.textContent = 'Procesando...';
+            btn.disabled = true;
             setTimeout(() => {
-                showClientScreen('tracking');
-                document.getElementById('paymentBtn').textContent = 'Pagar $14.98';
-                document.getElementById('paymentBtn').disabled = false;
+                toScreen('tracking');
+                btn.textContent = 'Confirmar Pago';
+                btn.disabled = false;
             }, 1500);
+        }
+
+        function repeatOrder() {
+            toScreen('checkout');
         }
     </script>
 </body>
